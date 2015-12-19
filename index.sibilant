@@ -9,29 +9,42 @@
 (react/tags Nav Input Button NavItem Navbar Navbar.Header Navbar.Brand
        Navbar.Toggle Navbar.Collapse Navbar.Form MenuItem NavDropdown
        Glyphicon
-       a)
+       a div p)
+
+(def-class LikeButton
+           get-initial-state (#> { liked false })
+           handle-click (#> (this.set-state { liked (not this.state.liked) }))
+           render (#>
+                   (p on-click this.handle-click
+                      ("You "
+                       (if this.state.liked 'like "haven't liked")
+                       " this. Click to toggle."))))
 
 
 (ReactDOM.render
- (Navbar inverse!
-         (Navbar.Header
-          (Navbar.Brand (a href "http://sibilantjs.info" "Sibilant JS"))
-          (Navbar.Toggle))
+ (div
+  (Navbar inverse!
 
-         (Navbar.Collapse
-          (Nav
-           (NavItem event-key 1 href: "#" "Link")
-           (NavItem event-key 2 href: "#" "Link")
-           (NavDropdown event-key 3 title: "Dropdown" id: "basic-nav-dropdown"
-                        (MenuItem event-key: 3.1 "Action")
-                        (MenuItem event-key: 3.2 "Another action")
-                        (MenuItem inverse! event-key: 3.3 "Something else here")
-                        (MenuItem divider!)
-                        (MenuItem event-key: 3.4 "Separated link")))
+          (Navbar.Header
+           (Navbar.Brand (a href "http://sibilantjs.info" "Sibilant JS"))
+           (Navbar.Toggle))
 
-          (Navbar.Form pull-right!
-                       (Input type 'text placeholder 'Search)
-                       (Button type 'submit (Glyphicon glyph: 'search)))))
+          (Navbar.Collapse
+           (Nav
+            (NavItem event-key 1 href: "#" "Link")
+            (NavItem event-key 2 href: "#" "Link")
+            (NavDropdown event-key 3 title: "Dropdown" id: "basic-nav-dropdown"
+                         (MenuItem event-key: 3.1 "Action")
+                         (MenuItem event-key: 3.2 "Another action")
+                         (MenuItem inverse! event-key: 3.3 "Something else here")
+                         (MenuItem divider!)
+                         (MenuItem event-key: 3.4 "Separated link")))
+
+           (Navbar.Form pull-right!
+                        (Input type 'text placeholder 'Search)
+                        (Button type 'submit (Glyphicon glyph: 'search)))))
+  (LikeButton))
+ 
  (document.get-element-by-id 'app))
 
 
