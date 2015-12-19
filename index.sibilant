@@ -1,0 +1,37 @@
+(include "sibilant-react/macros")
+(import-namespace react)
+
+(var React (require 'react)
+     ReactDOM (require "react-dom")
+     Bootstrap (require "react-bootstrap")
+     { Nav NavItem Navbar NavDropdown MenuItem Input Button Glyphicon } Bootstrap)
+
+(react/tags Nav Input Button NavItem Navbar Navbar.Header Navbar.Brand
+       Navbar.Toggle Navbar.Collapse Navbar.Form MenuItem NavDropdown
+       Glyphicon
+       a)
+
+
+(ReactDOM.render
+ (Navbar inverse!
+         (Navbar.Header
+          (Navbar.Brand (a href "http://sibilantjs.info" "Sibilant JS"))
+          (Navbar.Toggle))
+
+         (Navbar.Collapse
+          (Nav
+           (NavItem event-key 1 href: "#" "Link")
+           (NavItem event-key 2 href: "#" "Link")
+           (NavDropdown event-key 3 title: "Dropdown" id: "basic-nav-dropdown"
+                        (MenuItem event-key: 3.1 "Action")
+                        (MenuItem event-key: 3.2 "Another action")
+                        (MenuItem inverse! event-key: 3.3 "Something else here")
+                        (MenuItem divider!)
+                        (MenuItem event-key: 3.4 "Separated link")))
+
+          (Navbar.Form pull-right!
+                       (Input type 'text placeholder 'Search)
+                       (Button type 'submit (Glyphicon glyph: 'search)))))
+ (document.get-element-by-id 'app))
+
+
