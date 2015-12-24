@@ -104,7 +104,13 @@
 
             (div
              (strong "description")
-             (p doc.description)
+             (p (|> doc.description
+                    (.split (regex "(`[^`]+`)" 'g))
+                    (.map (#(segment)
+                            (if (match-regex? segment "`[^`]+`")
+                                (code (.slice segment 1 -1))
+                                segment)))))
+
              (strong "arguments")
              (SibilantCode (join doc.arguments " "))
              (.map doc.examples (#> (Example key ("" doc.name "/examples/" #1)

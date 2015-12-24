@@ -170,8 +170,18 @@ var Macro = React.createClass({
           key: tag
         }, camelcaseToWords(tag));
       }))))
-    }, React.createElement("div", null, React.createElement("strong", null, "description"), React.createElement("p", null, doc.description), React.createElement("strong", null, "arguments"), React.createElement(SibilantCode, null, doc.arguments.join(" ")), doc.examples.map((function() {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:110:32 */
+    }, React.createElement("div", null, React.createElement("strong", null, "description"), React.createElement("p", null, doc.description.split((new RegExp("(`[^`]+`)", "g"))).map((function(segment) {
+      /* /Users/jbr/code/sibilant-website/index.sibilant:109:26 */
+    
+      return (function() {
+        if (segment.match((new RegExp("`[^`]+`", undefined)))) {
+          return React.createElement("code", null, segment.slice(1, -1));
+        } else {
+          return segment;
+        }
+      }).call(this);
+    }))), React.createElement("strong", null, "arguments"), React.createElement(SibilantCode, null, doc.arguments.join(" ")), doc.examples.map((function() {
+      /* /Users/jbr/code/sibilant-website/index.sibilant:116:32 */
     
       return React.createElement(Example, {
         key: ("" + doc.name + "/examples/" + arguments[1]),
@@ -182,7 +192,7 @@ var Macro = React.createClass({
     })), (function() {
       if ((doc.references && doc.references.length)) {
         return React.createElement(ListGroup, null, React.createElement(ListGroupItem, { header: "references" }), doc.references.map((function() {
-          /* /Users/jbr/code/sibilant-website/index.sibilant:118:30 */
+          /* /Users/jbr/code/sibilant-website/index.sibilant:124:30 */
         
           return React.createElement(ListGroupItem, {
             style: {
@@ -201,13 +211,13 @@ var Macro = React.createClass({
 var Tags = React.createClass({
   displayName: "Tags",
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:129:11 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:135:11 */
   
     var _this = this,
         tags = this.props.tags,
         filter = this.props.filter;
     return React.createElement(ListGroup, null, React.createElement(ListGroupItem, { header: "Macro tags" }), Object.keys(tags).map((function(tag) {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:136:22 */
+      /* /Users/jbr/code/sibilant-website/index.sibilant:142:22 */
     
       var active = filter === tag;
       return React.createElement(ListGroupItem, {
@@ -215,7 +225,7 @@ var Tags = React.createClass({
         active: active,
         style: { outline: "none" },
         onClick: (function() {
-          /* /Users/jbr/code/sibilant-website/index.sibilant:141:48 */
+          /* /Users/jbr/code/sibilant-website/index.sibilant:147:48 */
         
           return _this.props.setFilter((function() {
             if (active) {
@@ -236,17 +246,17 @@ var Tags = React.createClass({
 var DocListing = React.createClass({
   displayName: "DocListing",
   getInitialState: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:150:29 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:156:29 */
   
     return { filter: "" };
   }),
   setFilter: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:151:22 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:157:22 */
   
     return this.setState({ filter: arguments[0] });
   }),
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:153:11 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:159:11 */
   
     var filter = this.state.filter,
         _this = this;
@@ -262,7 +272,7 @@ var DocListing = React.createClass({
       sm: 8,
       mdPull: 3
     }, this.props.docs.filter((function(doc) {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:163:38 */
+      /* /Users/jbr/code/sibilant-website/index.sibilant:169:38 */
     
       return (function() {
         if (filter) {
@@ -276,7 +286,7 @@ var DocListing = React.createClass({
     
       return arguments[0].name.toString().localeCompare(arguments[1].name);
     })).map((function(doc) {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:167:35 */
+      /* /Users/jbr/code/sibilant-website/index.sibilant:173:35 */
     
       return React.createElement(Macro, {
         setFilter: this.setFilter,
