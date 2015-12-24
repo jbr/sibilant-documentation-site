@@ -9,6 +9,9 @@ module.exports = {
   devtool: "source-map",
   plugins: [ (new webpack.optimize.UglifyJsPlugin()) ],
   module: { loaders: [ {
+    test: (new RegExp("\\.json$", undefined)),
+    loader: "json"
+  }, {
     test: (new RegExp("\\.sibilant$", undefined)),
     loader: "sibilant"
   } ] }

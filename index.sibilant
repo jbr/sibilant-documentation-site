@@ -10,7 +10,20 @@
 (var React (require 'react)
      ReactDOM (require "react-dom")
      Bootstrap (require "react-bootstrap")
-     sibilant (|> "sibilant/lib/browser" require (get 'sibilant)))
+     sibilant-docs (require "sibilant/docs/docs.json"))
+
+(set window 'docs sibilant-docs)
+
+(var sibilant-docs-tags
+     (scoped
+      (var tags (|> sibilant-docs
+                    (.map (#-> (get 'tags)))
+                    (.reduce (#> (.concat #0 #1)) []))
+           counts {})
+      (each tag tags
+            (set counts tag (|> counts (get tag) (or 0) (+ 1))))
+      counts))
+
 
 (import-classes Bootstrap
                 Nav NavItem Navbar NavDropdown MenuItem
@@ -24,7 +37,6 @@
 (react/tags a div p h3 pre code span strong ol li)
 
 (set window
-     'sibilant sibilant
      "$" $)
 
 (def camelcase-to-words (tag) (replace-all tag "[A-Z]" (#-> (" ") .to-lower-case)))
@@ -172,7 +184,7 @@
            (Navbar.Form pull-right!
                         (Input type 'text placeholder 'Search disabled! button-after
                                (Button type 'submit disabled! (Glyphicon glyph: 'search))))))
-  (DocListing tags (sibilant.docs.tags) docs (sibilant.docs.data)))
+  (DocListing tags sibilant-docs-tags docs sibilant-docs))
  
  (document.get-element-by-id 'app))
 
