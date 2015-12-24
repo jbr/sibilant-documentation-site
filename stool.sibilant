@@ -15,5 +15,12 @@
 
 (command serve "start a server"
          (exec "http-server" next))
+(command upload "upload to s3"
+         (console.log "Syncing to amazon s3")
+         (exec ("aws s3 sync . s3://sibilantjs.info/new/ "
+                "--acl public-read "
+                "--exclude \".git/*\" "
+                "--exclude \"node_modules/*\"")
+               next))
 
 (sequence all [ package index config webpack ])

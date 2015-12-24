@@ -6,12 +6,14 @@
 (var React (require 'react)
      ReactDOM (require "react-dom")
      Bootstrap (require "react-bootstrap")
+     hljs (require "./highlight.pack.js")
      sibilant (|> "sibilant/lib/browser" require (get 'sibilant)))
 
 (import-classes Bootstrap
                 Nav NavItem Navbar NavDropdown MenuItem
-                Input Button ButtonToolbar Badge Glyphicon Panel
+                Input Button ButtonToolbar ButtonGroup Badge Glyphicon Panel
                 Accordion ListGroup ListGroupItem PanelGroup Grid Row
+                Label
                 Col)
 
 (react/tags Navbar.Header Navbar.Brand Navbar.Toggle Navbar.Collapse Navbar.Form)
@@ -24,95 +26,133 @@
 
 (def camelcase-to-words (tag) (replace-all tag "[A-Z]" (#-> (" ") .to-lower-case)))
 
+(def color-for-tag (tag)
+     (switch tag
+             ('deprecated 'danger)
+             ('experimental 'warning)
+             (default 'default)))
+
+
+(def-class Highlight
+           (var highlight { **html (|>
+                                    (hljs.highlight (get { js 'js sibilant 'lisp }
+                                                         this.props.language)
+                                                    this.props.children true)
+                                    (get 'value)) })
+           (pre
+            (Label style { float 'right
+                           margin-top -10
+                           margin-right -10
+                           border-radius 0
+                           border-bottom-left-radius 3 }
+                   this.props.language)
+            (code dangerously-set-inner-HTML highlight)))
+
+(def-class JSCode (Highlight language 'js this.props.children))
+
+(def-class SibilantCode (Highlight language 'sibilant this.props.children))
 
 (def-class Example
-           render (#> (div (strong ("example " (+ 1 this.props.count)))
-                           (pre class-name 'sibilant (code this.props.sibilant))
-                           (pre class-name 'js (code this.props.js))
-                           )))
+           (div (strong ("example " (+ 1 this.props.count)))
+                (SibilantCode this.props.sibilant)
+                (JSCode this.props.js)))
+
 
 (def-class MacroDefinition
            get-initial-state (#> { expanded false })
            on-click (#> (this.set-state { expanded (not this.state.expanded) }))
-           render (#>
-                   (div
-                    (Button on-click this.on-click "macro definition " (span class-name 'caret))
-                    (when this.state.expanded
-                          (pre class-name 'sibilant (code this.props.doc.definition))))))
+
+           (div
+            (Button on-click this.on-click "macro definition " (span class-name 'caret))
+            (when this.state.expanded (SibilantCode this.props.doc.definition))))
 
 
 (def-class Macro
            get-initial-state (#> { open false })
-           render (#>
 
-                   (var doc this.props.doc
-                        *this this)
+           (var doc this.props.doc
+                *this this)
 
-                   (Panel header (h3 ("" doc.name))
-                          on-click (#> (*this.set-state { open (not *this.state.open) }))
-                          (div
-                           (p doc.description)
-                           (.map doc.examples (#> (Example key ("" doc.name "/examples/" #1)
-                                                           count #1
-                                                           js (get #0 'javascript)
-                                                           sibilant (get #0 'sibilant))))
-                           (when (and doc.references doc.references.length)
-                                 (div
-                                  (strong "references")
-                                  (ol
-                                   (|> doc.references
-                                       (.map (#> (li key #1 (a href #0 #0))))))))
+           (Panel
+            on-click (#> (*this.set-state { open (not *this.state.open) }))
 
-                           (MacroDefinition doc doc)
+            header (h3 (code doc.name)
+                       (ButtonGroup style {float 'right}
+                                    (|> doc.tags
+                                        .sort
+                                        (.map (#(tag) (Button bs-size 'xsmall
+                                                              bs-style (color-for-tag tag)
+                                                              on-click (#> (*this.props.set-filter tag))
+                                                              key tag
+                                                              (camelcase-to-words tag)))))))
 
-                           (ButtonToolbar (.map doc.tags
-                                                (#(tag) (Button bs-size 'xsmall
-                                                                on-click (#> (*this.props.set-filter tag))
-                                                                key tag
-                                                                (camelcase-to-words tag)))))))))
+
+            (div
+             (strong "description")
+             (p doc.description)
+             (strong "arguments")
+             (SibilantCode (join doc.arguments " "))
+             (.map doc.examples (#> (Example key ("" doc.name "/examples/" #1)
+                                             count #1
+                                             js (get #0 'javascript)
+                                             sibilant (get #0 'sibilant))))
+             (when (and doc.references doc.references.length)
+                   (ListGroup
+                    (ListGroupItem header "references")
+                    (|> doc.references
+                        (.map (#> (ListGroupItem style { white-space 'nowrap
+                                                         overflow 'hidden
+                                                         text-overflow 'ellipsis }
+                                                 key #1
+                                                 href #0
+                                                 #0))))))
+             (MacroDefinition doc doc))))
 
 
 
 (def-class Tags
-           render (#>
-                   (var *this this
-                        tags this.props.tags
-                        filter this.props.filter)
-                   (ListGroup
-                    (ListGroupItem header "Macro tags")
-                        (|> tags
-                            (keys)
-                            (.map (#(tag)
-                                    (var active (= filter tag))
-                                    (ListGroupItem key tag
-                                             active active
-                                             on-click (#> (*this.props.set-filter (if active "" tag)))
-                                             (when active (Glyphicon glyph: 'remove))
-                                             " "
-                                             (camelcase-to-words tag)
-                                             " "
-                                             (Badge (get tags tag)))))))))
+           (var *this this
+                tags this.props.tags
+                filter this.props.filter)
+           (ListGroup
+            (ListGroupItem header "Macro tags")
+            (|> tags
+                (keys)
+                (.map (#(tag)
+                        (var active (= filter tag))
+                        (ListGroupItem key tag
+                                       active active
+                                       style { outline 'none }
+                                       on-click (#> (*this.props.set-filter (if active "" tag)))
+                                       (when active (Glyphicon glyph: 'remove))
+                                       " "
+                                       (camelcase-to-words tag)
+                                       " "
+                                       (Badge (get tags tag))))))))
 
 
 (def-class DocListing
            get-initial-state (#> { filter "" })
            set-filter (#> (this.set-state { filter #0 }))
-           render (#>
-                   (var filter this.state.filter *this this)
-                   (Grid (Row
-                          (Col md 7 md-offset 1 sm 8
-                               (pipe this.props.docs
-                                     (.filter (#(doc) (if filter
-                                                          (|> doc.tags (or []) (includes? filter))
-                                                          true)))
-                                     (sort-by 'name)
-                                     (.map (#(doc) (Macro set-filter: this.set-filter,
-                                                          key: doc.name,
-                                                          doc: doc))
-                                           this)))
-                          (Col sm 3 fixed! (Tags filter filter
-                                                 tags *this.props.tags
-                                                 set-filter *this.set-filter))))))
+
+           (var filter this.state.filter
+                *this this)
+           (Grid (Row
+                  (Col md-push 7 sm 3
+                       (Tags filter filter
+                             tags *this.props.tags
+                             set-filter *this.set-filter))
+
+                  (Col md 7 sm 8 md-pull 3
+                       (pipe this.props.docs
+                             (.filter (#(doc) (if filter
+                                                  (|> doc.tags (or []) (includes? filter))
+                                                  true)))
+                             (sort-by 'name)
+                             (.map (#(doc) (Macro set-filter: this.set-filter,
+                                                  key: doc.name,
+                                                  doc: doc))
+                                   this))))))
 
 (ReactDOM.render
  (div
@@ -127,8 +167,8 @@
             (NavItem event-key 2 href: "#" "REPL"))
 
            (Navbar.Form pull-right!
-                        (Input type 'text placeholder 'Search disabled!)
-                        (Button type 'submit disabled! (Glyphicon glyph: 'search)))))
+                        (Input type 'text placeholder 'Search disabled! button-after
+                               (Button type 'submit disabled! (Glyphicon glyph: 'search))))))
   (DocListing tags (sibilant.docs.tags) docs (sibilant.docs.data)))
  
  (document.get-element-by-id 'app))
