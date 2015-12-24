@@ -1,8 +1,9 @@
 window["$"] = require("jquery");
+var hljs = window.hljs;
+delete window.hljs;
 var React = require("react"),
     ReactDOM = require("react-dom"),
     Bootstrap = require("react-bootstrap"),
-    hljs = require("./highlight.pack.js"),
     sibilant = require("sibilant/lib/browser").sibilant;
 var $_symbol1_$ = Bootstrap,
     Nav = $_symbol1_$.Nav,
@@ -29,7 +30,7 @@ var $_symbol1_$ = Bootstrap,
 window.sibilant = sibilant;
 window["$"] = $;
 var camelcaseToWords = (function camelcaseToWords$(tag) {
-  /* camelcase-to-words /Users/jbr/code/sibilant-website/index.sibilant:27:0 */
+  /* camelcase-to-words /Users/jbr/code/sibilant-website/index.sibilant:30:0 */
 
   return tag.replace((new RegExp("[A-Z]", "g")), (function() {
     /* /Users/jbr/code/sibilant/include/macros.sibilant:668:30 */
@@ -38,7 +39,7 @@ var camelcaseToWords = (function camelcaseToWords$(tag) {
   }));
 });
 var colorForTag = (function colorForTag$(tag) {
-  /* color-for-tag /Users/jbr/code/sibilant-website/index.sibilant:29:0 */
+  /* color-for-tag /Users/jbr/code/sibilant-website/index.sibilant:32:0 */
 
   return (function() {
     switch(tag) {
@@ -56,7 +57,7 @@ var colorForTag = (function colorForTag$(tag) {
 var Highlight = React.createClass({
   displayName: "Highlight",
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:37:11 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:40:11 */
   
     var highlight = { __html: hljs.highlight({
       js: "js",
@@ -74,7 +75,7 @@ var Highlight = React.createClass({
 var JSCode = React.createClass({
   displayName: "JSCode",
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:51:18 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:54:18 */
   
     return React.createElement(Highlight, { language: "js" }, this.props.children);
   })
@@ -82,7 +83,7 @@ var JSCode = React.createClass({
 var SibilantCode = React.createClass({
   displayName: "SibilantCode",
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:53:24 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:56:24 */
   
     return React.createElement(Highlight, { language: "sibilant" }, this.props.children);
   })
@@ -90,7 +91,7 @@ var SibilantCode = React.createClass({
 var Example = React.createClass({
   displayName: "Example",
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:56:11 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:59:11 */
   
     return React.createElement("div", null, React.createElement("strong", null, ("example " + (1 + this.props.count))), React.createElement(SibilantCode, null, this.props.sibilant), React.createElement(JSCode, null, this.props.js));
   })
@@ -98,17 +99,17 @@ var Example = React.createClass({
 var MacroDefinition = React.createClass({
   displayName: "MacroDefinition",
   getInitialState: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:62:29 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:65:29 */
   
     return { expanded: false };
   }),
   onClick: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:63:20 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:66:20 */
   
     return this.setState({ expanded: !(this.state.expanded) });
   }),
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:65:11 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:68:11 */
   
     return React.createElement("div", null, React.createElement(Button, { onClick: this.onClick }, "macro definition ", React.createElement("span", { className: "caret" })), (function() {
       if (this.state.expanded) {
@@ -120,29 +121,29 @@ var MacroDefinition = React.createClass({
 var Macro = React.createClass({
   displayName: "Macro",
   getInitialState: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:71:29 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:74:29 */
   
     return { open: false };
   }),
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:73:11 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:76:11 */
   
     var doc = this.props.doc,
         _this = this;
     return React.createElement(Panel, {
       onClick: (function() {
-        /* /Users/jbr/code/sibilant-website/index.sibilant:77:21 */
+        /* /Users/jbr/code/sibilant-website/index.sibilant:80:21 */
       
         return _this.setState({ open: !(_this.state.open) });
       }),
       header: React.createElement("h3", null, React.createElement("code", null, doc.name), React.createElement(ButtonGroup, { style: { float: "right" } }, doc.tags.sort().map((function(tag) {
-        /* /Users/jbr/code/sibilant-website/index.sibilant:83:46 */
+        /* /Users/jbr/code/sibilant-website/index.sibilant:86:46 */
       
         return React.createElement(Button, {
           bsSize: "xsmall",
           bsStyle: colorForTag(tag),
           onClick: (function() {
-            /* /Users/jbr/code/sibilant-website/index.sibilant:85:71 */
+            /* /Users/jbr/code/sibilant-website/index.sibilant:88:71 */
           
             return _this.props.setFilter(tag);
           }),
@@ -150,7 +151,7 @@ var Macro = React.createClass({
         }, camelcaseToWords(tag));
       }))))
     }, React.createElement("div", null, React.createElement("strong", null, "description"), React.createElement("p", null, doc.description), React.createElement("strong", null, "arguments"), React.createElement(SibilantCode, null, doc.arguments.join(" ")), doc.examples.map((function() {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:95:32 */
+      /* /Users/jbr/code/sibilant-website/index.sibilant:98:32 */
     
       return React.createElement(Example, {
         key: ("" + doc.name + "/examples/" + arguments[1]),
@@ -161,7 +162,7 @@ var Macro = React.createClass({
     })), (function() {
       if ((doc.references && doc.references.length)) {
         return React.createElement(ListGroup, null, React.createElement(ListGroupItem, { header: "references" }), doc.references.map((function() {
-          /* /Users/jbr/code/sibilant-website/index.sibilant:103:30 */
+          /* /Users/jbr/code/sibilant-website/index.sibilant:106:30 */
         
           return React.createElement(ListGroupItem, {
             style: {
@@ -180,13 +181,13 @@ var Macro = React.createClass({
 var Tags = React.createClass({
   displayName: "Tags",
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:114:11 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:117:11 */
   
     var _this = this,
         tags = this.props.tags,
         filter = this.props.filter;
     return React.createElement(ListGroup, null, React.createElement(ListGroupItem, { header: "Macro tags" }), Object.keys(tags).map((function(tag) {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:121:22 */
+      /* /Users/jbr/code/sibilant-website/index.sibilant:124:22 */
     
       var active = filter === tag;
       return React.createElement(ListGroupItem, {
@@ -194,7 +195,7 @@ var Tags = React.createClass({
         active: active,
         style: { outline: "none" },
         onClick: (function() {
-          /* /Users/jbr/code/sibilant-website/index.sibilant:126:48 */
+          /* /Users/jbr/code/sibilant-website/index.sibilant:129:48 */
         
           return _this.props.setFilter((function() {
             if (active) {
@@ -215,17 +216,17 @@ var Tags = React.createClass({
 var DocListing = React.createClass({
   displayName: "DocListing",
   getInitialState: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:135:29 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:138:29 */
   
     return { filter: "" };
   }),
   setFilter: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:136:22 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:139:22 */
   
     return this.setState({ filter: arguments[0] });
   }),
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:138:11 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:141:11 */
   
     var filter = this.state.filter,
         _this = this;
@@ -241,7 +242,7 @@ var DocListing = React.createClass({
       sm: 8,
       mdPull: 3
     }, this.props.docs.filter((function(doc) {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:148:38 */
+      /* /Users/jbr/code/sibilant-website/index.sibilant:151:38 */
     
       return (function() {
         if (filter) {
@@ -255,7 +256,7 @@ var DocListing = React.createClass({
     
       return arguments[0].name.toString().localeCompare(arguments[1].name);
     })).map((function(doc) {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:152:35 */
+      /* /Users/jbr/code/sibilant-website/index.sibilant:155:35 */
     
       return React.createElement(Macro, {
         setFilter: this.setFilter,

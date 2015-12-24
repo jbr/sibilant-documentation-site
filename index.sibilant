@@ -3,6 +3,10 @@
 
 (set window "$" (require "jquery"))
 
+;; hljs isn't commonjs compatible except the massive npm build
+(var hljs window.hljs)
+(delete window.hljs)
+
 (var React (require 'react)
      ReactDOM (require "react-dom")
      Bootstrap (require "react-bootstrap")
