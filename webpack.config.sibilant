@@ -3,7 +3,9 @@
 (assign module.exports
         { entry "./index.sibilant"
           output { path "build"
-                   filename "[name].bundle.js" }
+                   filename "[name].bundle.js"
+                   source-map-filename "[file].map" }
+          devtool "source-map"
           plugins [ (new webpack.optimize.UglifyJsPlugin) ]
           module { loaders [
             { test (regex "\\.sibilant$") loader "sibilant" }

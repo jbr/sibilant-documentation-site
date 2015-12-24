@@ -1,49 +1,113 @@
 (include "sibilant-react/macros")
 (import-namespace react)
 
+(set window "$" (require "jquery"))
+
 (var React (require 'react)
      ReactDOM (require "react-dom")
      Bootstrap (require "react-bootstrap")
-     { Nav NavItem Navbar NavDropdown MenuItem Input Button Glyphicon } Bootstrap)
+     sibilant (|> "sibilant/lib/browser" require (get 'sibilant)))
 
-(react/tags Nav Input Button NavItem Navbar Navbar.Header Navbar.Brand
-       Navbar.Toggle Navbar.Collapse Navbar.Form MenuItem NavDropdown
-       Glyphicon
-       a div p)
+(import-classes Bootstrap
+                Nav NavItem Navbar NavDropdown MenuItem
+                Input Button ButtonToolbar Badge Glyphicon Panel
+                Accordion ListGroup ListGroupItem PanelGroup Grid Row
+                Col)
 
-(def-class LikeButton
-           get-initial-state (#> { liked false })
-           handle-click (#> (this.set-state { liked (not this.state.liked) }))
+(react/tags Navbar.Header Navbar.Brand Navbar.Toggle Navbar.Collapse Navbar.Form)
+
+(react/tags a div p h3 pre code span strong ol li)
+
+(set window
+     'sibilant sibilant
+     "$" $)
+
+(def-class Example
+           render (#> (div (strong ("example " (+ 1 this.props.count)))
+                           (pre class-name 'sibilant (code this.props.sibilant))
+                           (pre class-name 'js (code this.props.js))
+                           )))
+
+(def-class Macro
+           get-initial-state (#> { open false })
            render (#>
-                   (p on-click this.handle-click
-                      ("You "
-                       (if this.state.liked 'like "haven't liked")
-                       " this. Click to toggle."))))
+                   (var doc this.props.doc *this this)
 
+                   (Panel header (h3 ("" doc.name))
+                          on-click (#> (*this.set-state { open (not *this.state.open) }))
+                          (div
+                           (p doc.description)
+                           (.map doc.examples (#> (Example key ("" doc.name "/examples/" #1)
+                                                           count #1
+                                                           js (get #0 'javascript)
+                                                           sibilant (get #0 'sibilant))))
+                           (ol
+                            (|> doc.references (or [])
+                                (.map (#> (li key #1 (a href #0 #0))))))
+
+                           (ButtonToolbar (.map doc.tags
+                                                (#(tag) (Button on-click (#> (*this.props.set-filter tag))
+                                                                key tag
+                                                                tag))))))))
+
+
+
+(def-class Tags
+           render (#>
+                   (var *this this
+                        tags this.props.tags
+                        filter this.props.filter)
+                   (ListGroup
+                        (|> tags
+                            (keys)
+                            (.map (#(tag)
+                                    (var active (= filter tag))
+                                    (ListGroupItem key tag
+                                             active active
+                                             on-click (#> (*this.props.set-filter (if active "" tag)))
+                                             (when active (Glyphicon glyph: 'remove))
+                                             " "
+                                             (replace-all tag "[A-Z]" (#-> (" ") .to-lower-case))
+                                             " "
+                                             (Badge (get tags tag)))))))))
+
+
+(def-class DocListing
+           get-initial-state (#> { filter "" })
+           set-filter (#> (this.set-state { filter #0 }))
+           render (#>
+                   (var filter this.state.filter *this this)
+                   (Grid (Row
+                          (Col md 7 md-offset 1 sm 8
+                               (pipe this.props.docs
+                                     (.filter (#(doc) (if filter
+                                                          (|> doc.tags (or []) (includes? filter))
+                                                          true)))
+                                     (sort-by 'name)
+                                     (.map (#(doc) (Macro set-filter: this.set-filter,
+                                                          key: doc.name,
+                                                          doc: doc))
+                                           this)))
+                          (Col sm 3 fixed! (Tags filter filter
+                                                 tags *this.props.tags
+                                                 set-filter *this.set-filter))))))
 
 (ReactDOM.render
  (div
   (Navbar inverse!
-
           (Navbar.Header
            (Navbar.Brand (a href "http://sibilantjs.info" "Sibilant JS"))
            (Navbar.Toggle))
 
           (Navbar.Collapse
            (Nav
-            (NavItem event-key 1 href: "#" "Link")
-            (NavItem event-key 2 href: "#" "Link")
-            (NavDropdown event-key 3 title: "Dropdown" id: "basic-nav-dropdown"
-                         (MenuItem event-key: 3.1 "Action")
-                         (MenuItem event-key: 3.2 "Another action")
-                         (MenuItem inverse! event-key: 3.3 "Something else here")
-                         (MenuItem divider!)
-                         (MenuItem event-key: 3.4 "Separated link")))
+            (NavItem event-key 1 href: "https://github.com/jbr/sibilant" "Github")
+            (NavItem event-key 2 href: "#" "REPL"))
 
            (Navbar.Form pull-right!
-                        (Input type 'text placeholder 'Search)
-                        (Button type 'submit (Glyphicon glyph: 'search)))))
-  (LikeButton))
+                        (Input type 'text placeholder 'Search disabled!)
+                        (Button type 'submit disabled! (Glyphicon glyph: 'search)))))
+  (DocListing tags (sibilant.docs.tags) docs (sibilant.docs.data)))
  
  (document.get-element-by-id 'app))
 

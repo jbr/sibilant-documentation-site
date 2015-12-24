@@ -1,0 +1,16 @@
+(include "stool/include/stool")
+(import-namespace stool)
+
+(command package "rebuilds the npm package json"
+         (exec "sibilant package.son -o" next))
+
+(command config "rebuilds the webpack config"
+         (exec "sibilant webpack.config.sibilant -o" next))
+
+(command webpack "builds the website with webpack"
+         (exec "webpack" next))
+
+(command index "rebuilds the index for inspection"
+         (exec "sibilant ./index.sibilant -o" next))
+
+(sequence all [ package index config webpack ])
