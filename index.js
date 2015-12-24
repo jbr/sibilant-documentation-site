@@ -25,35 +25,66 @@ var $_symbol1_$ = Bootstrap,
     $_symbol1_$ = undefined;
 window.sibilant = sibilant;
 window["$"] = $;
+var camelcaseToWords = (function camelcaseToWords$(tag) {
+  /* camelcase-to-words /Users/jbr/code/sibilant-website/index.sibilant:25:0 */
+
+  return tag.replace((new RegExp("[A-Z]", "g")), (function() {
+    /* /Users/jbr/code/sibilant/include/macros.sibilant:668:30 */
+  
+    return (" " + arguments[0]).toLowerCase();
+  }));
+});
 var Example = React.createClass({
   displayName: "Example",
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:26:18 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:29:18 */
   
     return React.createElement("div", null, React.createElement("strong", null, ("example " + (1 + this.props.count))), React.createElement("pre", { className: "sibilant" }, React.createElement("code", null, this.props.sibilant)), React.createElement("pre", { className: "js" }, React.createElement("code", null, this.props.js)));
+  })
+});
+var MacroDefinition = React.createClass({
+  displayName: "MacroDefinition",
+  getInitialState: (function() {
+    /* /Users/jbr/code/sibilant-website/index.sibilant:35:29 */
+  
+    return { expanded: false };
+  }),
+  onClick: (function() {
+    /* /Users/jbr/code/sibilant-website/index.sibilant:36:20 */
+  
+    return this.setState({ expanded: !(this.state.expanded) });
+  }),
+  render: (function() {
+    /* /Users/jbr/code/sibilant-website/index.sibilant:37:18 */
+  
+    return React.createElement("div", null, React.createElement(Button, { onClick: this.onClick }, "macro definition ", React.createElement("span", { className: "caret" })), (function() {
+      if (this.state.expanded) {
+        return React.createElement("pre", { className: "sibilant" }, React.createElement("code", null, this.props.doc.definition));
+      }
+    }).call(this));
   })
 });
 var Macro = React.createClass({
   displayName: "Macro",
   getInitialState: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:32:29 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:45:29 */
   
     return { open: false };
   }),
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:33:18 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:46:18 */
   
     var doc = this.props.doc,
         _this = this;
     return React.createElement(Panel, {
       header: React.createElement("h3", null, ("" + doc.name)),
       onClick: (function() {
-        /* /Users/jbr/code/sibilant-website/index.sibilant:37:35 */
+        /* /Users/jbr/code/sibilant-website/index.sibilant:52:35 */
       
         return _this.setState({ open: !(_this.state.open) });
       })
     }, React.createElement("div", null, React.createElement("p", null, doc.description), doc.examples.map((function() {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:40:46 */
+      /* /Users/jbr/code/sibilant-website/index.sibilant:55:46 */
     
       return React.createElement(Example, {
         key: ("" + doc.name + "/examples/" + arguments[1]),
@@ -61,41 +92,46 @@ var Macro = React.createClass({
         js: arguments[0].javascript,
         sibilant: arguments[0].sibilant
       });
-    })), React.createElement("ol", null, (doc.references || []).map((function() {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:46:38 */
-    
-      return React.createElement("li", { key: arguments[1] }, React.createElement("a", { href: arguments[0] }, arguments[0]));
-    }))), React.createElement(ButtonToolbar, null, doc.tags.map((function(tag) {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:49:48 */
+    })), (function() {
+      if ((doc.references && doc.references.length)) {
+        return React.createElement("div", null, React.createElement("strong", null, "references"), React.createElement("ol", null, doc.references.map((function() {
+          /* /Users/jbr/code/sibilant-website/index.sibilant:64:45 */
+        
+          return React.createElement("li", { key: arguments[1] }, React.createElement("a", { href: arguments[0] }, arguments[0]));
+        }))));
+      }
+    }).call(this), React.createElement(MacroDefinition, { doc: doc }), React.createElement(ButtonToolbar, null, doc.tags.map((function(tag) {
+      /* /Users/jbr/code/sibilant-website/index.sibilant:69:48 */
     
       return React.createElement(Button, {
+        bsSize: "xsmall",
         onClick: (function() {
-          /* /Users/jbr/code/sibilant-website/index.sibilant:49:73 */
+          /* /Users/jbr/code/sibilant-website/index.sibilant:70:73 */
         
           return _this.props.setFilter(tag);
         }),
         key: tag
-      }, tag);
+      }, camelcaseToWords(tag));
     })))));
   })
 });
 var Tags = React.createClass({
   displayName: "Tags",
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:56:18 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:77:18 */
   
     var _this = this,
         tags = this.props.tags,
         filter = this.props.filter;
-    return React.createElement(ListGroup, null, Object.keys(tags).map((function(tag) {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:63:34 */
+    return React.createElement(ListGroup, null, React.createElement(ListGroupItem, { header: "Macro tags" }), Object.keys(tags).map((function(tag) {
+      /* /Users/jbr/code/sibilant-website/index.sibilant:85:34 */
     
       var active = filter === tag;
       return React.createElement(ListGroupItem, {
         key: tag,
         active: active,
         onClick: (function() {
-          /* /Users/jbr/code/sibilant-website/index.sibilant:67:54 */
+          /* /Users/jbr/code/sibilant-website/index.sibilant:89:54 */
         
           return _this.props.setFilter((function() {
             if (active) {
@@ -109,28 +145,24 @@ var Tags = React.createClass({
         if (active) {
           return React.createElement(Glyphicon, { glyph: "remove" });
         }
-      }).call(this), " ", tag.replace((new RegExp("[A-Z]", "g")), (function() {
-        /* /Users/jbr/code/sibilant/include/macros.sibilant:668:30 */
-      
-        return (" " + arguments[0]).toLowerCase();
-      })), " ", React.createElement(Badge, null, tags[tag]));
+      }).call(this), " ", camelcaseToWords(tag), " ", React.createElement(Badge, null, tags[tag]));
     })));
   })
 });
 var DocListing = React.createClass({
   displayName: "DocListing",
   getInitialState: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:76:29 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:98:29 */
   
     return { filter: "" };
   }),
   setFilter: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:77:22 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:99:22 */
   
     return this.setState({ filter: arguments[0] });
   }),
   render: (function() {
-    /* /Users/jbr/code/sibilant-website/index.sibilant:78:18 */
+    /* /Users/jbr/code/sibilant-website/index.sibilant:100:18 */
   
     var filter = this.state.filter,
         _this = this;
@@ -139,7 +171,7 @@ var DocListing = React.createClass({
       mdOffset: 1,
       sm: 8
     }, this.props.docs.filter((function(doc) {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:83:46 */
+      /* /Users/jbr/code/sibilant-website/index.sibilant:105:46 */
     
       return (function() {
         if (filter) {
@@ -153,7 +185,7 @@ var DocListing = React.createClass({
     
       return arguments[0].name.toString().localeCompare(arguments[1].name);
     })).map((function(doc) {
-      /* /Users/jbr/code/sibilant-website/index.sibilant:87:43 */
+      /* /Users/jbr/code/sibilant-website/index.sibilant:109:43 */
     
       return React.createElement(Macro, {
         setFilter: this.setFilter,

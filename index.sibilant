@@ -22,16 +22,31 @@
      'sibilant sibilant
      "$" $)
 
+(def camelcase-to-words (tag) (replace-all tag "[A-Z]" (#-> (" ") .to-lower-case)))
+
+
 (def-class Example
            render (#> (div (strong ("example " (+ 1 this.props.count)))
                            (pre class-name 'sibilant (code this.props.sibilant))
                            (pre class-name 'js (code this.props.js))
                            )))
 
+(def-class MacroDefinition
+           get-initial-state (#> { expanded false })
+           on-click (#> (this.set-state { expanded (not this.state.expanded) }))
+           render (#>
+                   (div
+                    (Button on-click this.on-click "macro definition " (span class-name 'caret))
+                    (when this.state.expanded
+                          (pre class-name 'sibilant (code this.props.doc.definition))))))
+
+
 (def-class Macro
            get-initial-state (#> { open false })
            render (#>
-                   (var doc this.props.doc *this this)
+
+                   (var doc this.props.doc
+                        *this this)
 
                    (Panel header (h3 ("" doc.name))
                           on-click (#> (*this.set-state { open (not *this.state.open) }))
@@ -41,14 +56,20 @@
                                                            count #1
                                                            js (get #0 'javascript)
                                                            sibilant (get #0 'sibilant))))
-                           (ol
-                            (|> doc.references (or [])
-                                (.map (#> (li key #1 (a href #0 #0))))))
+                           (when (and doc.references doc.references.length)
+                                 (div
+                                  (strong "references")
+                                  (ol
+                                   (|> doc.references
+                                       (.map (#> (li key #1 (a href #0 #0))))))))
+
+                           (MacroDefinition doc doc)
 
                            (ButtonToolbar (.map doc.tags
-                                                (#(tag) (Button on-click (#> (*this.props.set-filter tag))
+                                                (#(tag) (Button bs-size 'xsmall
+                                                                on-click (#> (*this.props.set-filter tag))
                                                                 key tag
-                                                                tag))))))))
+                                                                (camelcase-to-words tag)))))))))
 
 
 
@@ -58,6 +79,7 @@
                         tags this.props.tags
                         filter this.props.filter)
                    (ListGroup
+                    (ListGroupItem header "Macro tags")
                         (|> tags
                             (keys)
                             (.map (#(tag)
@@ -67,7 +89,7 @@
                                              on-click (#> (*this.props.set-filter (if active "" tag)))
                                              (when active (Glyphicon glyph: 'remove))
                                              " "
-                                             (replace-all tag "[A-Z]" (#-> (" ") .to-lower-case))
+                                             (camelcase-to-words tag)
                                              " "
                                              (Badge (get tags tag)))))))))
 

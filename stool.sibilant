@@ -13,4 +13,7 @@
 (command index "rebuilds the index for inspection"
          (exec "sibilant ./index.sibilant -o" next))
 
+(command serve "start a server"
+         (exec "http-server" next))
+
 (sequence all [ package index config webpack ])
