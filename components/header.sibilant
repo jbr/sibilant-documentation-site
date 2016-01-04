@@ -1,0 +1,34 @@
+(include "../macros.sibilant")
+(import-namespace react)
+(import-bootstrap)
+(import-classes (require "react-router") Link)
+
+(def-class Header
+           handle-change (#>
+                          (|> (this.refs.input.get-value)
+                              (this.props.on-filter-change)))
+
+
+           (var { handle-change on-search } this
+                { filter } this.props )
+           (Navbar
+            (Navbar.Header
+             (Navbar.Brand (Link to "/" "Sibilant LISP"))
+             (Navbar.Toggle))
+
+            (Navbar.Collapse
+             (Nav
+              (NavItem event-key 1 href: "https://github.com/jbr/sibilant" "Github")
+              (NavItem event-key 2 href: "#" "REPL"))
+
+             (Navbar.Form pull-right!
+                          (Input ref 'input
+                                 type 'text
+                                 value (if filter filter "")
+                                 placeholder 'Search
+                                 on-change handle-change
+                                 button-after (Button type 'submit
+                                                      on-click handle-change
+                                                      (Glyphicon glyph: 'search)))))))
+
+(set exports 'Header Header)

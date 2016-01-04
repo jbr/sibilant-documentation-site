@@ -1,0 +1,9 @@
+(var helpers exports)
+
+(def helpers.camelcase-to-words (tag) (replace-all tag "[A-Z]" (#-> (" ") .to-lower-case)))
+
+(def helpers.color-for-tag (tag)
+     (switch tag
+             ('deprecated 'danger)
+             ('experimental 'warning)
+             (default 'default)))

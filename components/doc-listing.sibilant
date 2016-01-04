@@ -1,0 +1,27 @@
+(include "../macros.sibilant")
+(import-namespace react)
+(import-bootstrap)
+
+(import-classes (require "./tags.sibilant") Tags)
+(import-classes (require "./macro.sibilant") Macro)
+
+(def-class DocListing
+           (var { on-filter-change tags filter docs doc-names } this.props)
+
+           (Grid (Row
+                  (Col md-push 7 sm 3
+                       (Tags filter filter
+                             tags tags
+                             on-filter-change on-filter-change))
+
+                  (Col md 7 sm 8 md-pull 3
+                       (docs.map (#(doc)
+                                   (Macro doc: doc,
+                                          doc-names doc-names
+                                          filter: filter,
+                                          on-filter-change: on-filter-change,
+                                          key: doc.name)))))))
+
+
+(set exports 'DocListing DocListing)
+

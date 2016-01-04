@@ -1,0 +1,4 @@
+(def exports.set-filter (filter)
+     { type 'set-filter,
+       filter filter })
+

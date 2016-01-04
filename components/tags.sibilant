@@ -1,0 +1,29 @@
+(include "../macros.sibilant")
+(import-namespace react)
+(import-bootstrap)
+(var { camelcase-to-words color-for-tag } (require "../helpers.sibilant"))
+(import-classes (require "react-router") Link)
+
+(def-class Tags
+           (var { on-filter-change tags filter } this.props)
+
+           (ListGroup
+            (ListGroupItem header "Macro tags")
+            (|> tags
+                (keys)
+                (.map (#(tag)
+                        (var active (= filter tag))
+                         (Link to (if active "/" ("/"tag)) key tag
+                               (ListGroupItem
+                                key tag
+                                active active
+                                style { outline 'none }
+
+                                (when active (Glyphicon glyph: 'remove))
+                                " "
+                                (camelcase-to-words tag)
+                                " "
+                                (Badge (get tags tag)))))))))
+
+(set exports 'Tags Tags)
+

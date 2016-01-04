@@ -1,0 +1,52 @@
+(include "../macros.sibilant")
+(import-namespace react)
+
+(var { Component PropTypes } React
+     { connect } (require "react-redux")
+     { set-filter } (require "../actions.sibilant")
+     { Router Route Link } (require "react-router")
+     { push-path } (require "redux-simple-router")
+     values (require "lodash/object/values"))
+
+(import-classes (require "../components/doc-listing.sibilant") DocListing)
+(import-classes (require "../components/header.sibilant") Header)
+
+(def-class App
+           (var { on-filter-change tags docs filter doc-names } this.props)
+           (div
+            (Header on-filter-change on-filter-change,
+                    tags tags,
+                    filter filter,
+                    docs docs)
+            (DocListing on-filter-change on-filter-change,
+                    tags tags,
+                    filter filter,
+                    docs docs
+                    doc-names doc-names)))
+
+(def select-docs (docs filter)
+     (if (as-boolean filter)
+         (|> docs
+             (values)
+             (.filter (#(doc)
+                        (or (|> doc.tags (includes? filter))
+                            (|> doc.name (match-regex? ("^" filter)))))))
+
+         (values docs)))
+
+(def map-state-to-props (state props)
+     (var filter (or props.route-params.filter state.filter ""))
+       { docs (|> (select-docs state.docs-by-name filter) (or []))
+         tags (|> state.tags (or {}))
+         doc-names state.doc-names
+         filter filter  })
+
+
+(def map-dispatch-to-props (dispatch)
+     { on-filter-change (#>
+                         (dispatch (push-path (ternary #0 ("/" #0) "/")))) })
+
+(set exports 'App ((connect map-state-to-props map-dispatch-to-props)
+                   App))
+
+

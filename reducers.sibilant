@@ -1,0 +1,20 @@
+(var assign (require "lodash/object/assign")
+     { UPDATE_PATH } (require "redux-simple-router")
+     { initial-state } (require "./initial-state.sibilant")
+     reducers { })
+
+
+(def reducers.filter (state action)
+     (default state false)
+     (if (= action.type 'set-filter)
+         (or action.filter false)
+
+         state))
+
+(each-key attribute initial-state
+          (set reducers attribute
+               (#(state action)
+                  (default state (get initial-state attribute)))))
+
+
+(set module 'exports reducers)

@@ -4,9 +4,10 @@
         { entry "./index.sibilant"
           output { path "build"
                    filename "[name].bundle.js"
+                   chunkFilename: "[id].[hash].bundle.js"
                    source-map-filename "[file].map" }
-          devtool "source-map"
           plugins [ (new webpack.optimize.UglifyJsPlugin) ]
+          devtool "source-map"
           module { loaders
                    [ { test (regex "\\.json$")
                        loader "json" }

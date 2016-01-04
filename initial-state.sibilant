@@ -1,0 +1,18 @@
+(var values (require "lodash/object/values")
+     docs (require "sibilant/docs/docs.json")
+     docs-by-name (|> docs (.reduce (#> (set #0 (get #1 'name) #1) #0) {}))
+     tags (scoped
+           (var tags (|> docs
+                         (values)
+                         (.map (#-> (get 'tags)))
+                         (.reduce (#> (.concat #0 #1)) []))
+                counts {})
+           (each tag tags
+                 (set counts tag (|> counts (get tag) (or 0) (+ 1))))
+           counts)
+
+     initial-state { docs-by-name docs-by-name
+                     tags tags
+                     doc-names (keys docs-by-name) })
+
+(set exports 'initial-state initial-state)

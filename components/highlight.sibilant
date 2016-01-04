@@ -1,0 +1,28 @@
+(include "../macros.sibilant")
+(import-namespace react)
+(import-bootstrap)
+
+(def-class Highlight
+           (var highlight-snippet (|> (get { js 'js sibilant 'lisp }
+                                           this.props.language)
+                                      (hljs.highlight this.props.children true)
+                                      (get 'value))
+                highlight { **html highlight-snippet })
+           (pre
+            (Label style { float 'right
+                           margin-top -10
+                           margin-right -10
+                           border-radius 0
+                           border-bottom-left-radius 3 }
+                   this.props.language)
+            (code dangerously-set-inner-HTML highlight)))
+
+(def-class HighlightJS (Highlight language 'js this.props.children))
+
+(def-class HighlightSibilant (Highlight language 'sibilant this.props.children))
+
+(set Highlight
+     'JS HighlightJS
+     'Sibilant HighlightSibilant)
+
+(set exports 'Highlight Highlight)

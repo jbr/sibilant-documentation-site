@@ -4,10 +4,11 @@ module.exports = {
   output: {
     path: "build",
     filename: "[name].bundle.js",
+    chunkFilename: "[id].[hash].bundle.js",
     sourceMapFilename: "[file].map"
   },
-  devtool: "source-map",
   plugins: [ (new webpack.optimize.UglifyJsPlugin()) ],
+  devtool: "source-map",
   module: { loaders: [ {
     test: (new RegExp("\\.json$", undefined)),
     loader: "json"

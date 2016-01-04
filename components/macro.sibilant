@@ -1,0 +1,73 @@
+(include "../macros.sibilant")
+(import-namespace react)
+(import-bootstrap)
+(import-classes (require "./highlight.sibilant") Highlight)
+(tags Highlight.Sibilant Highlight.JS)
+(import-classes (require "./macro-definition.sibilant") MacroDefinition)
+(import-classes (require "./example.sibilant") Example)
+(import-classes (require "react-router") Link)
+
+(var { camelcase-to-words color-for-tag } (require "../helpers.sibilant"))
+
+(def-class Macro
+           get-initial-state (#> { open false })
+
+           (var { on-filter-change tags filter doc doc-names } this.props)
+
+           (Panel
+            header (h3 (code doc.name)
+                       (Link to ("/" doc.name) (Glyphicon glyph "link"))
+                       (ButtonGroup style {float 'right}
+                                    (|> doc.tags
+                                        .sort
+                                        (.map (#(tag)
+                                                (if (= tag filter)
+                                                    (Link to "/"
+                                                          key tag
+                                                    (Button bs-size 'xsmall
+                                                            bs-style 'primary
+                                                            (Glyphicon glyph: 'remove) " "
+                                                            (camelcase-to-words tag)))
+
+                                                    (Link to ("/"tag)
+                                                          key tag
+                                                          (Button bs-size 'xsmall
+                                                                  bs-style (color-for-tag tag)
+                                                                  (camelcase-to-words tag)))))))))
+            (div
+             (strong "description")
+             (p (|> doc.description
+                    (.split (regex "(`[^`]+`)" 'g))
+                    (.map (#(segment i)
+                            (if (match-regex? segment "`[^`]+`")
+                                (do
+                                 (var token (.slice segment 1 -1))
+                                 (if (or (includes? doc.arguments token)
+                                         (includes? doc.arguments ("..." token)))
+                                     (code style { background-color 'blue } key i token)
+
+                                     (|> doc-names (includes? token))
+                                     (Link to ("/" token) key i token)
+
+                                     (code key i token)))
+                                (span key i segment))))))
+
+             (strong "arguments")
+             (p (|> doc.arguments (.map (#> (code key (""doc.name"/args/"#1) #0)))))
+             (.map doc.examples (#> (Example key ("" doc.name "/examples/" #1)
+                                             count #1
+                                             js (get #0 'javascript)
+                                             sibilant (get #0 'sibilant))))
+             (when (and doc.references doc.references.length)
+                   (ListGroup
+                    (ListGroupItem header "references")
+                    (|> doc.references
+                        (.map (#> (ListGroupItem style { white-space 'nowrap
+                                                         overflow 'hidden
+                                                         text-overflow 'ellipsis }
+                                                 key #0
+                                                 href #0
+                                                 #0))))))
+             (MacroDefinition doc doc))))
+
+(set exports 'Macro Macro)

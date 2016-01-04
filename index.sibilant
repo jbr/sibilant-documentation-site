@@ -1,197 +1,28 @@
-(include "sibilant-react/macros")
+(include "./macros.sibilant")
 (import-namespace react)
 
-(set window "$" (require "jquery"))
+(var
+ { render } (require "react-dom")
+ { create-store combine-reducers } (require 'redux)
+ *assign (require "lodash/object/assign")
+ reducers (require "./reducers.sibilant")
+ { create-history } (require 'history)
+ { sync-redux-and-router route-reducer } (require "redux-simple-router")
+ root-element (document.get-element-by-id 'app))
 
-;; hljs isn't commonjs compatible except the massive npm build
-(var hljs window.hljs)
-(delete window.hljs)
+(import-classes (require "./containers/app.sibilant") App)
+(import-classes (require "react-redux") Provider)
+(import-classes (require "react-router") Router Route)
 
-(var React (require 'react)
-     ReactDOM (require "react-dom")
-     Bootstrap (require "react-bootstrap")
-     sibilant-docs (require "sibilant/docs/docs.json"))
+(var reducer (combine-reducers (*assign {} reducers { routing route-reducer }))
+     store (create-store reducer)
+     history (create-history))
 
-(set window 'docs sibilant-docs)
-
-(var sibilant-docs-tags
-     (scoped
-      (var tags (|> sibilant-docs
-                    (.map (#-> (get 'tags)))
-                    (.reduce (#> (.concat #0 #1)) []))
-           counts {})
-      (each tag tags
-            (set counts tag (|> counts (get tag) (or 0) (+ 1))))
-      counts))
+(sync-redux-and-router history store)
 
 
-(import-classes Bootstrap
-                Nav NavItem Navbar NavDropdown MenuItem
-                Input Button ButtonToolbar ButtonGroup Badge Glyphicon Panel
-                Accordion ListGroup ListGroupItem PanelGroup Grid Row
-                Label
-                Col)
-
-(react/tags Navbar.Header Navbar.Brand Navbar.Toggle Navbar.Collapse Navbar.Form)
-
-(react/tags a div p h3 pre code span strong ol li)
-
-(set window
-     "$" $)
-
-(def camelcase-to-words (tag) (replace-all tag "[A-Z]" (#-> (" ") .to-lower-case)))
-
-(def color-for-tag (tag)
-     (switch tag
-             ('deprecated 'danger)
-             ('experimental 'warning)
-             (default 'default)))
-
-
-(def-class Highlight
-           (var highlight { **html (|>
-                                    (hljs.highlight (get { js 'js sibilant 'lisp }
-                                                         this.props.language)
-                                                    this.props.children true)
-                                    (get 'value)) })
-           (pre
-            (Label style { float 'right
-                           margin-top -10
-                           margin-right -10
-                           border-radius 0
-                           border-bottom-left-radius 3 }
-                   this.props.language)
-            (code dangerously-set-inner-HTML highlight)))
-
-(def-class JSCode (Highlight language 'js this.props.children))
-
-(def-class SibilantCode (Highlight language 'sibilant this.props.children))
-
-(def-class Example
-           (div (strong ("example " (+ 1 this.props.count)))
-                (SibilantCode this.props.sibilant)
-                (JSCode this.props.js)))
-
-
-(def-class MacroDefinition
-           get-initial-state (#> { expanded false })
-           on-click (#> (this.set-state { expanded (not this.state.expanded) }))
-
-           (div
-            (Button on-click this.on-click "macro definition " (span class-name 'caret))
-            (when this.state.expanded (SibilantCode this.props.doc.definition))))
-
-
-(def-class Macro
-           get-initial-state (#> { open false })
-
-           (var doc this.props.doc
-                *this this)
-
-           (Panel
-            on-click (#> (*this.set-state { open (not *this.state.open) }))
-
-            header (h3 (code doc.name)
-                       (ButtonGroup style {float 'right}
-                                    (|> doc.tags
-                                        .sort
-                                        (.map (#(tag) (Button bs-size 'xsmall
-                                                              bs-style (color-for-tag tag)
-                                                              on-click (#> (*this.props.set-filter tag))
-                                                              key tag
-                                                              (camelcase-to-words tag)))))))
-
-
-            (div
-             (strong "description")
-             (p (|> doc.description
-                    (.split (regex "(`[^`]+`)" 'g))
-                    (.map (#(segment)
-                            (if (match-regex? segment "`[^`]+`")
-                                (code (.slice segment 1 -1))
-                                segment)))))
-
-             (strong "arguments")
-             (SibilantCode (join doc.arguments " "))
-             (.map doc.examples (#> (Example key ("" doc.name "/examples/" #1)
-                                             count #1
-                                             js (get #0 'javascript)
-                                             sibilant (get #0 'sibilant))))
-             (when (and doc.references doc.references.length)
-                   (ListGroup
-                    (ListGroupItem header "references")
-                    (|> doc.references
-                        (.map (#> (ListGroupItem style { white-space 'nowrap
-                                                         overflow 'hidden
-                                                         text-overflow 'ellipsis }
-                                                 key #1
-                                                 href #0
-                                                 #0))))))
-             (MacroDefinition doc doc))))
-
-
-
-(def-class Tags
-           (var *this this
-                tags this.props.tags
-                filter this.props.filter)
-           (ListGroup
-            (ListGroupItem header "Macro tags")
-            (|> tags
-                (keys)
-                (.map (#(tag)
-                        (var active (= filter tag))
-                        (ListGroupItem key tag
-                                       active active
-                                       style { outline 'none }
-                                       on-click (#> (*this.props.set-filter (if active "" tag)))
-                                       (when active (Glyphicon glyph: 'remove))
-                                       " "
-                                       (camelcase-to-words tag)
-                                       " "
-                                       (Badge (get tags tag))))))))
-
-
-(def-class DocListing
-           get-initial-state (#> { filter "" })
-           set-filter (#> (this.set-state { filter #0 }))
-
-           (var filter this.state.filter
-                *this this)
-           (Grid (Row
-                  (Col md-push 7 sm 3
-                       (Tags filter filter
-                             tags *this.props.tags
-                             set-filter *this.set-filter))
-
-                  (Col md 7 sm 8 md-pull 3
-                       (pipe this.props.docs
-                             (.filter (#(doc) (if filter
-                                                  (|> doc.tags (or []) (includes? filter))
-                                                  true)))
-                             (sort-by 'name)
-                             (.map (#(doc) (Macro set-filter: this.set-filter,
-                                                  key: doc.name,
-                                                  doc: doc))
-                                   this))))))
-
-(ReactDOM.render
- (div
-  (Navbar inverse!
-          (Navbar.Header
-           (Navbar.Brand (a href "http://sibilantjs.info" "Sibilant JS"))
-           (Navbar.Toggle))
-
-          (Navbar.Collapse
-           (Nav
-            (NavItem event-key 1 href: "https://github.com/jbr/sibilant" "Github")
-            (NavItem event-key 2 href: "#" "REPL"))
-
-           (Navbar.Form pull-right!
-                        (Input type 'text placeholder 'Search disabled! button-after
-                               (Button type 'submit disabled! (Glyphicon glyph: 'search))))))
-  (DocListing tags sibilant-docs-tags docs sibilant-docs))
- 
- (document.get-element-by-id 'app))
-
-
+(render (Provider store store
+                  (Router history history
+                          (Route path "/" component App)
+                          (Route path "/:filter" component App)))
+        root-element)

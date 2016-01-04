@@ -1,0 +1,33 @@
+(include "./react.sibilant")
+(namespace react)
+
+(var React (require 'react))
+
+(macro import-bootstrap ()
+       `(import-classes (require "react-bootstrap")
+         Nav NavItem Navbar NavDropdown
+         MenuItem Input Button ButtonToolbar ButtonGroup Badge
+         Glyphicon Panel Accordion ListGroup ListGroupItem PanelGroup
+         Grid Row Label Col))
+
+(tags Navbar.Header Navbar.Brand Navbar.Toggle Navbar.Collapse Navbar.Form)
+
+(tags a div p h3 pre code span strong ol li)
+
+(tags DocListing Header Macro Tags)
+
+(macro log-pretty (label arg)
+       (var node this
+            inspect (require "util-inspect")
+            prettify (|> (require "sibilant/lib/browser")
+                         (get 'sibilant 'pretty-print)))
+
+       (when (undefined? arg)
+             (assign arg label
+                     label ["\""(prettify label false)"\""]))
+
+       `(console.log (concat @["\""node.file":"node.line"\""]
+                             " "@label" = "
+                             (|> (require "util-inspect")
+                                 (call @arg false)))))
+(alias-macro log-pretty pretty-log)

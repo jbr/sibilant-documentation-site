@@ -1,12 +1,16 @@
 { dependencies {
-    "babel-preset-react" "^6.3.13"
-    "jquery" "^2.1.4"
-    "react" "^0.14.3"
-    "react-bootstrap" "^0.28.1"
-    "react-dom" "^0.14.3"
-    "sibilant" "^0.3.7"
-    "sibilant-loader" "^0.0.1"
-    "sibilant-react" "^0.0.5"
-    "webpack" "^1.12.9"
-}}
+                 "lodash" "latest"
+                 "react" "^0.14.3"
+                 "react-bootstrap" "^0.28.1"
+                 "react-dom" "^0.14.3"
+                 "redux" "^3.0.0"
+                 "sibilant" "../sibilant"
+                 "util-inspect" "^0.1.8"
+                 "sibilant-loader" "^0.0.1"
+                 "sibilant-react" "../sibilant-react"
+                 "history" "1.17.0"
+                 "react-router" "latest"
+                 "redux-simple-router" "1.0.2"
+                 "webpack" "^1.12.9"
+                 }}
 

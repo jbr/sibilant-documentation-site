@@ -1,0 +1,12 @@
+(include "../macros.sibilant")
+(import-namespace react)
+(import-bootstrap)
+(import-classes (require "./highlight.sibilant") Highlight)
+(tags Highlight.Sibilant Highlight.JS)
+
+
+(def-class Example
+           (div (strong ("example " (+ 1 this.props.count)))
+                (Highlight.Sibilant this.props.sibilant)
+                (Highlight.JS this.props.js)))
+(set exports 'Example Example)
