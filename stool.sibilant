@@ -17,7 +17,8 @@
          (exec "http-server" next))
 (command upload "upload to s3"
          (console.log "Syncing to amazon s3")
-         (exec ("aws s3 sync . s3://sibilantjs.info/new/ "
+         (exec ("aws s3 sync . s3://docs.sibilantjs.info/ "
+                "--region us-east-1 "
                 "--acl public-read "
                 "--exclude \".git/*\" "
                 "--exclude \"node_modules/*\"")
