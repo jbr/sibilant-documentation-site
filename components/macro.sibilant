@@ -44,7 +44,7 @@
                                  (var token (.slice segment 1 -1))
                                  (if (or (includes? doc.arguments token)
                                          (includes? doc.arguments ("..." token)))
-                                     (code style { background-color 'blue } key i token)
+                                     (code class-name 'argument key i token)
 
                                      (|> doc-names (includes? token))
                                      (Link to ("/" token) key i token)
