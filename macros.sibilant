@@ -1,4 +1,4 @@
-(include "./react.sibilant")
+(include "sibilant-react/macros")
 (namespace react)
 
 (var React (require 'react))
