@@ -1,5 +1,4 @@
-# Work In Progess
+# Macro documentation for [Sibilant](http://sibilantjs.info) [github](https://github.com/jbr/sibilant)
 
-* Site to replace sibilantjs.info
-* Built in React with Bootstrap
-* Written in Sibilant
+* docs.sibilantjs.info
+* Colophon: React, Redux, Simple Redux Router, Webpack, Sibilant, Sibilant-React, React-Bootstrap, HighlightJS
