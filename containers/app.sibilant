@@ -6,10 +6,12 @@
      { set-filter } (require "../actions.sibilant")
      { Router Route Link } (require "react-router")
      { push-path } (require "redux-simple-router")
-     values (require "lodash/object/values"))
+     values (require "lodash/object/values")
+     *sort-by (require "lodash/collection/sortBy"))
 
 (import-classes (require "../components/doc-listing.sibilant") DocListing)
 (import-classes (require "../components/header.sibilant") Header)
+(import-classes (require "../components/footer.sibilant") Footer)
 
 (def-class App
            (var { on-filter-change tags docs filter doc-names } this.props)
@@ -22,7 +24,8 @@
                     tags tags,
                     filter filter,
                     docs docs
-                    doc-names doc-names)))
+                    doc-names doc-names)
+            (Footer)))
 
 (def select-docs (docs filter)
      (if (as-boolean filter)
@@ -34,12 +37,17 @@
 
          (values docs)))
 
+(def sort-docs (docs-as-array)
+     (|> docs-as-array (*sort-by (#-> (get 'tags) (includes? 'deprecated))
+                                 (#-> (get 'tags) (first))
+                                 'name)))
+
 (def map-state-to-props (state props)
      (var filter (or props.route-params.filter state.filter ""))
-       { docs (|> (select-docs state.docs-by-name filter) (or []))
-         tags (|> state.tags (or {}))
-         doc-names state.doc-names
-         filter filter  })
+     { docs (|> state.docs-by-name (select-docs filter) (or []) (sort-docs))
+       tags (|> state.tags (or {}))
+       doc-names state.doc-names
+       filter filter  })
 
 
 (def map-dispatch-to-props (dispatch)

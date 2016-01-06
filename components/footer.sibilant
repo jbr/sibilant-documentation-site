@@ -1,0 +1,15 @@
+(include "../macros.sibilant")
+(import-namespace react)
+(import-bootstrap)
+
+(def-class Footer
+           (div
+            style { padding 50
+                    margin-top 100
+                    color "#99979c"
+                    background-color "#2a2730" }
+            (p (Glyphicon glyph "heart-empty")
+               " Made with love in 2016 by "
+               (a href "http://twitter.com/jacobrothstein" "Jacob Rothstein"))
+            (p "Colophon: sibilant, react, react-bootstrap, redux, highlightjs")))
+(set exports 'Footer Footer)
