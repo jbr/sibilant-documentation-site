@@ -12,18 +12,21 @@
             (|> tags
                 (keys)
                 (.map (#(tag)
-                        (var active (= filter tag))
-                         (Link to (if active "/" ("/"tag)) key tag
-                               (ListGroupItem
-                                key tag
-                                active active
-                                style { outline 'none }
-
-                                (when active (Glyphicon glyph: 'remove))
-                                " "
-                                (camelcase-to-words tag)
-                                " "
-                                (Badge (get tags tag)))))))))
+                        (var active (= filter tag)
+                             href (if active "/" ("/"tag)))
+                        (ListGroupItem
+                         key tag
+                         active active
+                         style { outline 'none }
+                         href href
+                         on-click (#>
+                                   (send #0 prevent-default)
+                                   (on-filter-change (if active "" tag)))
+                         (when active (Glyphicon glyph: 'remove))
+                         " "
+                         (camelcase-to-words tag)
+                         " "
+                         (Badge (get tags tag))))))))
 
 (set exports 'Tags Tags)
 
