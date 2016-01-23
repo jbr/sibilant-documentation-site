@@ -1,18 +1,20 @@
 (include "sibilant-react/macros")
 (namespace react)
 
-(var React (require 'react))
+(var React (require 'react)
+     *assign (require "lodash/object/assign"))
+
 
 (macro import-bootstrap ()
        `(import-classes (require "react-bootstrap")
          Nav NavItem Navbar NavDropdown
          MenuItem Input Button ButtonToolbar ButtonGroup Badge
-         Glyphicon Panel Accordion ListGroup ListGroupItem PanelGroup
-         Grid Row Label Col))
+         Glyphicon Panel Accordion ListGroup ListGroupItem PanelGroup ButtonInput
+         Grid Row Label Col Modal))
 
 (tags Navbar.Header Navbar.Brand Navbar.Toggle Navbar.Collapse Navbar.Form)
 
-(tags a div p h3 pre code span strong ol li)
+(tags a div p h3 pre code span strong ol li form)
 
 (tags DocListing Header Macro Tags)
 
@@ -31,3 +33,10 @@
                              (|> (require "util-inspect")
                                  (call @arg false)))))
 (alias-macro log-pretty pretty-log)
+
+(macro export (...local-vars)
+       (var pairs (local-vars.reduce
+                   (#(acc value) (acc.concat [(^core/quote value) value]))
+                   []))
+       `(set exports ...@pairs))
+

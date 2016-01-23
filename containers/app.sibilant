@@ -3,7 +3,7 @@
 
 (var { Component PropTypes } React
      { connect } (require "react-redux")
-     { set-filter } (require "../actions.sibilant")
+     { sibilize } (require "../actions.sibilant")
      { Router Route Link } (require "react-router")
      { push-path } (require "redux-simple-router")
      values (require "lodash/object/values")
@@ -12,10 +12,14 @@
 (import-classes (require "../components/doc-listing.sibilant") DocListing)
 (import-classes (require "../components/header.sibilant") Header)
 (import-classes (require "../components/footer.sibilant") Footer)
+(import-classes (require "../components/repl.sibilant") REPL)
 
 (def-class App
-           (var { on-filter-change tags docs filter doc-names } this.props)
+           (var { on-filter-change tags docs filter
+                  doc-names repl sibilize } this.props)
            (div
+            (when false (REPL repl: repl
+                  sibilize: sibilize))
             (Header on-filter-change on-filter-change,
                     tags tags,
                     filter filter,
@@ -46,13 +50,14 @@
      (var filter (or props.route-params.filter state.filter ""))
      { docs (|> state.docs-by-name (select-docs filter) (or []) (sort-docs))
        tags (|> state.tags (or {}))
+       repl state.repl
        doc-names state.doc-names
        filter filter  })
 
 
 (def map-dispatch-to-props (dispatch)
-     { on-filter-change (#>
-                         (dispatch (push-path (ternary #0 ("/" #0) "/")))) })
+     { sibilize (#-> sibilize dispatch)
+       on-filter-change (#> (|> (ternary #0 ("/" #0) "/") push-path dispatch)) })
 
 (set exports 'App ((connect map-state-to-props map-dispatch-to-props)
                    App))

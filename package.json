@@ -4,12 +4,13 @@
   "react-bootstrap": "^0.28.1",
   "react-dom": "^0.14.3",
   "redux": "^3.0.0",
-  "sibilant": "^0.3.8",
+  "sibilant": "^0.4.0",
   "util-inspect": "^0.1.8",
-  "sibilant-loader": "^0.0.1",
-  "sibilant-react": "^0.0.5",
+  "sibilant-loader": "^0.0.2",
+  "sibilant-react": "^0.0.6",
   "history": "1.17.0",
   "react-router": "latest",
   "redux-simple-router": "1.0.2",
-  "webpack": "^1.12.9"
+  "webpack": "^1.12.9",
+  "redux-thunk": "1.0.3"
 } }

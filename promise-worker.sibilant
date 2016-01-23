@@ -1,0 +1,33 @@
+
+(macro export (...local-vars)
+       (var pairs (local-vars.reduce
+                   (#(acc value) (acc.concat [(^core/quote value) value]))
+                   []))
+       `(set exports ...@pairs))
+
+(def PromiseWorker ()
+     (var promises {}
+          worker (new Worker "/build/worker.bundle.js"))
+
+     (def worker.onmessage (e)
+          (var {data} e
+               [identifier value] data
+               { error result } value
+               promise (get promises identifier)
+               [resolve reject] promise)
+          (when promise
+                (if error
+                    (reject error)
+                    (resolve result))
+                (delete (get promises identifier))))
+
+     (def worker.send (method args callback)
+          (new Promise (#(resolve reject)
+                         (var identifier (|> (Math.random) .to-string (.slice 2)))
+                         (set promises identifier [ resolve reject ])
+                         (worker.post-message [identifier method args]))))
+     worker)
+
+(export PromiseWorker)
+
+

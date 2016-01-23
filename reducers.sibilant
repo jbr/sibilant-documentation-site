@@ -1,20 +1,33 @@
-(var assign (require "lodash/object/assign")
-     { UPDATE_PATH } (require "redux-simple-router")
+(var *assign (require "lodash/object/assign")
      { initial-state } (require "./initial-state.sibilant")
+     { SET_FILTER DISPLAY_JS DISPLAY_SIBILANT } (require "./actions.sibilant")
      reducers { })
 
-
-(def reducers.filter (state action)
-     (default state false)
-     (if (= action.type 'set-filter)
-         (or action.filter false)
-
-         state))
 
 (each-key attribute initial-state
           (set reducers attribute
                (#(state action)
                   (default state (get initial-state attribute)))))
 
+(def reducers.filter (state action)
+     (default state false)
+     (if (= action.type SET_FILTER)
+         (or action.filter false)
+         state))
+
+(def reducers.repl (state action)
+     (default state initial-state.repl)
+     (var merge-state (#> (*assign {} state #0)))
+     
+     (if (= action.type DISPLAY_JS)
+         (merge-state { compiling false
+                        js-string action.js-string })
+
+         (= action.type DISPLAY_SIBILANT)
+         (merge-state { compiling true
+                        sibilant-string action.sibilant-string })
+         state))
 
 (set module 'exports reducers)
+
+

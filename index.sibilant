@@ -3,7 +3,8 @@
 
 (var
  { render } (require "react-dom")
- { create-store combine-reducers } (require 'redux)
+ { create-store combine-reducers apply-middleware } (require 'redux)
+ thunk (require "redux-thunk")
  *assign (require "lodash/object/assign")
  reducers (require "./reducers.sibilant")
  { create-history } (require 'history)
@@ -15,7 +16,8 @@
 (import-classes (require "react-router") Router Route)
 
 (var reducer (combine-reducers (*assign {} reducers { routing route-reducer }))
-     store (create-store reducer)
+     create-store-with-middleware (|> apply-middleware (call thunk) (call create-store))
+     store (create-store-with-middleware reducer)
      history (create-history))
 
 (sync-redux-and-router history store)

@@ -1,4 +1,5 @@
 (var values (require "lodash/object/values")
+     repl { sibilant "" }
      docs (require "sibilant/docs/docs.json")
      docs-by-name (|> docs (.reduce (#> (set #0 (get #1 'name) #1) #0) {}))
      tags (scoped
@@ -13,6 +14,7 @@
 
      initial-state { docs-by-name docs-by-name
                      tags tags
+                     repl repl
                      doc-names (keys docs-by-name) })
 
 (set exports 'initial-state initial-state)

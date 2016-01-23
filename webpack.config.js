@@ -1,6 +1,9 @@
 var webpack = require("webpack");
 module.exports = {
-  entry: "./index.sibilant",
+  entry: {
+    index: "./index.sibilant",
+    worker: "./worker.sibilant"
+  },
   output: {
     path: "build",
     filename: "[name].bundle.js",

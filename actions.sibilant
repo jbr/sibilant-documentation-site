@@ -1,4 +1,53 @@
-(def exports.set-filter (filter)
-     { type 'set-filter,
+(var SET_FILTER 'set-filter
+     REPL_EXECUTE_COMMAND 'repl-execute-command
+     DISPLAY_JS 'display-js
+     DISPLAY_SIBILANT 'display-sibilant
+     { PromiseWorker } (require "./promise-worker.sibilant")
+     werker (PromiseWorker))
+
+(macro export (...local-vars)
+       (var pairs (local-vars.reduce
+                   (#(acc value) (acc.concat [(^core/quote value) value]))
+                   []))
+       `(set exports ...@pairs))
+
+(def set-filter (filter)
+     { type SET_FILTER,
        filter filter })
 
+(def repl-execute-command (sibilant-string)
+     { type REPL_EXECUTE_COMMAND,
+       sibilant sibilant-string })
+
+(def display-js (js-string)
+     { type DISPLAY_JS,
+       js-string js-string })
+
+(def display-sibilant (sibilant-string)
+     { type DISPLAY_SIBILANT
+       sibilant-string sibilant-string })
+     
+(def sibilize (sibilant-string)
+     (#(dispatch)
+       (dispatch (display-sibilant sibilant-string))
+
+       (def fulfilled (js-string)
+            (dispatch (display-js js-string)))
+       (def rejected (error-message)
+            (dispatch (display-js error-message)))
+       (werker.terminate)
+       (delete werker)
+       (assign werker (PromiseWorker))
+       (|> werker
+           (.send 'sibilize [sibilant-string])
+           (.then fulfilled rejected))))
+
+(export SET_FILTER
+        REPL_EXECUTE_COMMAND
+        DISPLAY_JS
+        DISPLAY_SIBILANT
+        display-sibilant
+        set-filter
+        repl-execute-command
+        display-js
+        sibilize)
