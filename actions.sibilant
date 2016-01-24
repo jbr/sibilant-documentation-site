@@ -2,6 +2,7 @@
      REPL_EXECUTE_COMMAND 'repl-execute-command
      DISPLAY_JS 'display-js
      DISPLAY_SIBILANT 'display-sibilant
+     DISPLAY_REPL 'display-repl
      { PromiseWorker } (require "./promise-worker.sibilant")
      werker (PromiseWorker))
 
@@ -23,10 +24,14 @@
      { type DISPLAY_JS,
        js-string js-string })
 
+(def display-repl (visibility)
+     { type DISPLAY_REPL,
+       visibility visibility })
+
 (def display-sibilant (sibilant-string)
      { type DISPLAY_SIBILANT
        sibilant-string sibilant-string })
-     
+
 (def sibilize (sibilant-string)
      (#(dispatch)
        (dispatch (display-sibilant sibilant-string))
@@ -46,6 +51,8 @@
         REPL_EXECUTE_COMMAND
         DISPLAY_JS
         DISPLAY_SIBILANT
+        DISPLAY_REPL
+        display-repl
         display-sibilant
         set-filter
         repl-execute-command

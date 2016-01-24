@@ -1,5 +1,5 @@
 (var values (require "lodash/object/values")
-     repl { sibilant "" }
+     repl { sibilant "" visibility false }
      docs (require "sibilant/docs/docs.json")
      docs-by-name (|> docs (.reduce (#> (set #0 (get #1 'name) #1) #0) {}))
      tags (scoped

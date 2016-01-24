@@ -3,39 +3,43 @@
 (import-bootstrap)
 (tags Modal.Dialog Modal.Header Modal.Footer Modal.Body)
 (import-classes (require "./highlight.sibilant") Highlight)
-(tags Highlight.Sibilant Highlight.JS)
+(tags Highlight.Sibilant Highlight.JS h1)
 
 (var inspect (require "util-inspect"))
 
 (def-class REPL-js
-           (var {compiling sibilant-code js-code result } this.props
+           (var { compiling sibilant-code js-code result } this.props
                 *this this)
            (div
-            (when compiling "compiling")
-            (code (pre js-code))
-            (when result (code (pre result)))))
+            (when compiling 'compiling)
+            (pre (code js-code))
+            (when result (pre (code result)))))
             ;; (unless true
             ;;         (Highlight language: 'js, label: 'result, result))))
 
 (def-class REPL
            execute-command: (#> (|> this.refs.repl-input
-                                   (.get-value)
-                                   (this.props.sibilize)))
+                                   .get-value
+                                   this.props.sibilize))
            
-           (var { repl } this.props
+           (var { repl display-repl } this.props
                 { js-string sibilant-string compiling } repl)
 
-           (Modal.Dialog backdrop true animation true
-            (Modal.Header "REPL")
-                         (Modal.Body
-                          (ListGroup
-                            (Input type: 'textarea
-                                   ref: 'repl-input
-                                   value: sibilant-string
-                                   on-change: this.execute-command)
-                            (REPL-js sibilant-code sibilant-string
-                                     compiling compiling
-                                     js-code js-string)))))
+           (Modal show repl.visibility
+                  backdrop true
+                  animation true
+                  on-hide (#> (display-repl false))
+                  (Modal.Header close-button! (div (h1 "Interactive in-browser compiler")))
+                  (Modal.Body
+                   (ListGroup
+                    (Input type: 'textarea
+                           ref: 'repl-input
+                           placeholder "type sibilant code here to see it compiled below"
+                           value: sibilant-string
+                           on-change: this.execute-command)
+                    (REPL-js sibilant-code sibilant-string
+                             compiling compiling
+                             js-code js-string)))))
 
 
 

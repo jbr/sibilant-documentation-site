@@ -10,7 +10,7 @@
 
 
            (var { handle-change on-search } this
-                { filter } this.props )
+                { filter display-repl } this.props )
            (Navbar
             (Navbar.Header
              (Navbar.Brand (Link to "/" "Sibilant LISP"))
@@ -19,7 +19,8 @@
             (Navbar.Collapse
              (Nav
               (NavItem event-key 1 href: "https://github.com/jbr/sibilant" "Github")
-              (NavItem event-key 2 href: "http://sibilantjs.info" "Tutorial with REPL"))
+              (NavItem event-key 2 href: "http://sibilantjs.info" "Tutorial")
+              (NavItem event-key 3 on-click (#> (display-repl true)) "Try Sibilant in your browser!"))
 
              (Navbar.Form pull-right!
                           (Input ref 'input
