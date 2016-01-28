@@ -2,8 +2,9 @@
 (import-namespace react)
 (import-bootstrap)
 
-(import-classes (require "./tags.sibilant") Tags)
-(import-classes (require "./macro.sibilant") Macro)
+(import-classes!
+ {Tags} "./tags.sibilant"
+ {Macro} "./macro.sibilant")
 
 (def-class DocListing
            (var { on-filter-change tags filter docs doc-names } this.props)
@@ -22,6 +23,5 @@
                                           on-filter-change: on-filter-change,
                                           key: doc.name)))))))
 
-
-(set exports 'DocListing DocListing)
+(export DocListing)
 

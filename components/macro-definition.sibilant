@@ -1,8 +1,7 @@
 (include "../macros.sibilant")
 (import-namespace react)
 (import-bootstrap)
-(import-classes (require "./highlight.sibilant") Highlight)
-(tags Highlight.Sibilant)
+(import-classes! {Highlight HighlightSibilant} "./highlight.sibilant")
 
 (def-class MacroDefinition
            get-initial-state (#> { expanded false })
@@ -10,7 +9,7 @@
 
            (div
             (Button on-click this.on-click "macro definition " (span class-name 'caret))
-            (when this.state.expanded (Highlight.Sibilant this.props.doc.definition))))
+            (when this.state.expanded (HighlightSibilant this.props.doc.definition))))
 
-(set exports 'MacroDefinition MacroDefinition)
+(export MacroDefinition)
 

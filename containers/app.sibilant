@@ -11,10 +11,11 @@
 (var { Component PropTypes } React
      *sort-by lodash-collection.sort-by)
 
-(import-classes (require "../components/doc-listing.sibilant") DocListing)
-(import-classes (require "../components/header.sibilant") Header)
-(import-classes (require "../components/footer.sibilant") Footer)
-(import-classes (require "../components/repl.sibilant") REPL)
+(import-classes!
+ { DocListing } "../components/doc-listing.sibilant"
+ { Header } "../components/header.sibilant"
+ { Footer } "../components/footer.sibilant"
+ { REPL } "../components/repl.sibilant")
 
 (def-class App
            (var { on-filter-change tags docs filter

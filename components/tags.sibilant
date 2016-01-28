@@ -1,8 +1,8 @@
 (include "../macros.sibilant")
 (import-namespace react)
 (import-bootstrap)
-(var { camelcase-to-words color-for-tag } (require "../helpers.sibilant"))
-(import-classes (require "react-router") Link)
+(require! { camelcase-to-words color-for-tag } "../helpers.sibilant")
+(import-classes! {Link} "react-router")
 
 (def-class Tags
            (var { on-filter-change tags filter } this.props)
@@ -28,5 +28,5 @@
                          " "
                          (Badge (get tags tag))))))))
 
-(set exports 'Tags Tags)
+(export Tags)
 

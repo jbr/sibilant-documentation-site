@@ -1,11 +1,8 @@
 (include "../macros.sibilant")
 (import-namespace react)
 (import-bootstrap)
-(tags Modal.Dialog Modal.Header Modal.Footer Modal.Body)
-(import-classes (require "./highlight.sibilant") Highlight)
-(tags Highlight.Sibilant Highlight.JS h1)
 
-(var inspect (require "util-inspect"))
+(require! inspect "util-inspect")
 
 (def-class REPL-js
            (var { compiling sibilant-code js-code result } this.props

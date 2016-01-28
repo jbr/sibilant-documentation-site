@@ -1,8 +1,6 @@
 (include "../macros.sibilant")
 (import-namespace react)
 (import-bootstrap)
-(var worker (when window.Worker
-                  (new Worker "/build/worker.bundle.js")))
 
 (def-class Highlight
            (var highlight-snippet (try (|> (get { js 'js sibilant 'lisp } this.props.language)
@@ -27,4 +25,4 @@
      'JS HighlightJS
      'Sibilant HighlightSibilant)
 
-(set exports 'Highlight Highlight)
+(export Highlight HighlightJS HighlightSibilant)

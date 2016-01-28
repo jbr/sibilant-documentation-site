@@ -1,13 +1,14 @@
 (include "../macros.sibilant")
 (import-namespace react)
 (import-bootstrap)
-(import-classes (require "./highlight.sibilant") Highlight)
-(tags Highlight.Sibilant Highlight.JS)
-(import-classes (require "./macro-definition.sibilant") MacroDefinition)
-(import-classes (require "./example.sibilant") Example)
-(import-classes (require "react-router") Link)
 
-(var { camelcase-to-words color-for-tag } (require "../helpers.sibilant"))
+(import-classes!
+ {Highlight HighlightJS HighlightSibilant} "./highlight.sibilant"
+ {MacroDefinition} "./macro-definition.sibilant"
+ {Example} "./example.sibilant"
+ {Link} "react-router")
+
+(require! { camelcase-to-words color-for-tag } "../helpers.sibilant")
 
 (def-class Macro
            get-initial-state (#> { open false })
@@ -70,4 +71,4 @@
                                                  #0))))))
              (MacroDefinition doc doc))))
 
-(set exports 'Macro Macro)
+(export Macro)

@@ -2,23 +2,25 @@
 (import-namespace react)
 
 (require!
+ "redux-thunk"
  { render } "react-dom"
  { create-store combine-reducers apply-middleware } 'redux
- thunk "redux-thunk"
- lodash-object "lodash/object"
- reducers "./reducers.sibilant"
  { create-history } 'history
- { sync-redux-and-router route-reducer } "redux-simple-router")
+ { sync-redux-and-router route-reducer } "redux-simple-router"
+ lodash-object "lodash/object"
+ reducers "./reducers.sibilant")
 
-(import-classes (require "./containers/app.sibilant") App)
-(import-classes (require "react-redux") Provider)
-(import-classes (require "react-router") Router Route)
+
+(import-classes!
+ {App} "./containers/app.sibilant"
+ {Provider} "react-redux"
+ {Router Route} "react-router")
 
 (var
  *assign lodash-object.assign
  root-element (document.get-element-by-id 'app)
  reducer (combine-reducers (*assign {} reducers { routing route-reducer }))
- create-store-with-middleware (|> apply-middleware (call thunk) (call create-store))
+ create-store-with-middleware (|> apply-middleware (call redux-thunk) (call create-store))
  store (create-store-with-middleware reducer)
  history (create-history))
 

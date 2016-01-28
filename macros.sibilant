@@ -1,23 +1,25 @@
 (include "sibilant-react/macros")
 (namespace react)
 
-(require! React 'react
-          lodash-object "lodash/object")
+(require!
+ React 'react
+ lodash-object "lodash/object")
+
 (var *assign lodash-object.assign)
 
 
 (macro import-bootstrap ()
-       `(import-classes (require "react-bootstrap")
-         Nav NavItem Navbar NavDropdown
-         MenuItem Input Button ButtonToolbar ButtonGroup Badge
-         Glyphicon Panel Accordion ListGroup ListGroupItem PanelGroup ButtonInput
-         Grid Row Label Col Modal))
+       [
+       `(import-classes!
+         { Nav NavItem Navbar NavDropdown
+           MenuItem Input Button ButtonToolbar ButtonGroup Badge
+           Glyphicon Panel Accordion ListGroup ListGroupItem PanelGroup ButtonInput
+           Grid Row Label Col Modal } "react-bootstrap")
+         `(tags Navbar.Header Navbar.Brand Navbar.Toggle Navbar.Collapse Navbar.Form
+                Modal.Dialog Modal.Header Modal.Footer Modal.Body)
+         ])
 
-(tags Navbar.Header Navbar.Brand Navbar.Toggle Navbar.Collapse Navbar.Form)
-
-(tags a div p h3 pre code span strong ol li form)
-
-(tags DocListing Header Macro Tags)
+(tags a div p h1 h2 h3 pre code span strong ol li form)
 
 (macro log-pretty (label arg)
        (var node this
@@ -33,11 +35,6 @@
                              " "@label" = "
                              (|> (require "util-inspect")
                                  (call @arg false)))))
-(alias-macro log-pretty pretty-log)
 
-(macro export (...local-vars)
-       (var pairs (local-vars.reduce
-                   (#(acc value) (acc.concat [(^core/quote value) value]))
-                   []))
-       `(set exports ...@pairs))
+(alias-macro log-pretty pretty-log)
 
