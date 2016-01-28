@@ -1,10 +1,11 @@
-(var *assign (require "lodash/object/assign")
-     { initial-state } (require "./initial-state.sibilant")
-     { DISPLAY_REPL SET_FILTER
-       DISPLAY_JS DISPLAY_SIBILANT }
-         (require "./actions.sibilant")
-     reducers { })
+(require! lodash-object "lodash/object"
+          initial-state "./initial-state.sibilant"
+          { DISPLAY_REPL SET_FILTER
+            DISPLAY_JS DISPLAY_SIBILANT } "./actions.sibilant")
 
+
+(var *assign lodash-object.assign
+     reducers module.exports)
 
 (each-key attribute initial-state
           (set reducers attribute
@@ -33,7 +34,4 @@
                         sibilant-string action.sibilant-string })
 
          state))
-
-(set module 'exports reducers)
-
 

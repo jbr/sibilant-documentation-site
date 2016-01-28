@@ -1,7 +1,13 @@
-(var values (require "lodash/object/values")
-     repl { sibilant "" visibility false }
-     docs (require "sibilant/docs/docs.json")
+(require! {values} "lodash/object"
+          docs "sibilant/docs/docs.json")
+
+(var repl { sibilant ""
+            visibility false }
+
      docs-by-name (|> docs (.reduce (#> (set #0 (get #1 'name) #1) #0) {}))
+
+     doc-names (keys docs-by-name)
+
      tags (scoped
            (var tags (|> docs
                          (values)
@@ -10,11 +16,7 @@
                 counts {})
            (each tag tags
                  (set counts tag (|> counts (get tag) (or 0) (+ 1))))
-           counts)
+           counts))
 
-     initial-state { docs-by-name docs-by-name
-                     tags tags
-                     repl repl
-                     doc-names (keys docs-by-name) })
 
-(set exports 'initial-state initial-state)
+(export docs-by-name tags repl doc-names)

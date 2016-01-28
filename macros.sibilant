@@ -1,8 +1,9 @@
 (include "sibilant-react/macros")
 (namespace react)
 
-(var React (require 'react)
-     *assign (require "lodash/object/assign"))
+(require! React 'react
+          lodash-object "lodash/object")
+(var *assign lodash-object.assign)
 
 
 (macro import-bootstrap ()

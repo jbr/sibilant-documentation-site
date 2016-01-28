@@ -1,13 +1,15 @@
 (include "../macros.sibilant")
 (import-namespace react)
 
+(require! { connect } "react-redux"
+          { sibilize display-repl } "../actions.sibilant"
+          { Router Route Link } "react-router"
+          { push-path } "redux-simple-router"
+          { values } "lodash/object"
+          lodash-collection "lodash/collection")
+            
 (var { Component PropTypes } React
-     { connect } (require "react-redux")
-     { sibilize display-repl } (require "../actions.sibilant")
-     { Router Route Link } (require "react-router")
-     { push-path } (require "redux-simple-router")
-     values (require "lodash/object/values")
-     *sort-by (require "lodash/collection/sortBy"))
+     *sort-by lodash-collection.sort-by)
 
 (import-classes (require "../components/doc-listing.sibilant") DocListing)
 (import-classes (require "../components/header.sibilant") Header)

@@ -1,17 +1,25 @@
 (var webpack (require 'webpack))
 
-(assign module.exports
-        { entry { index "./index.sibilant"
-                  worker "./worker.sibilant" }
-          output { path "build"
-                   filename "[name].bundle.js"
-                   chunkFilename: "[id].[hash].bundle.js"
-                   source-map-filename "[file].map" }
-          plugins [ (new webpack.optimize.UglifyJsPlugin) ]
-          devtool "source-map"
-          module { loaders
-                   [ { test (regex "\\.json$")
-                       loader "json" }
-                     { test (regex "\\.sibilant$")
-                       loader "sibilant" }]}})
-          ;; devtool "eval"
+(set module.exports
+     'entry { index "./index.sibilant"
+              worker "./worker.sibilant" }
+
+     'output { path "build"
+               filename "[name].bundle.js"
+               chunkFilename: "[id].[hash].bundle.js"
+               source-map-filename "[file].map" }
+
+     'devtool 'eval
+
+     'module { loaders
+               [ { test (regex "\\.json$")
+                   loader "json" }
+                 { test (regex "\\.sibilant$")
+                   loader "sibilant" }]})
+
+(when (= 'production process.env.NODE_ENV)
+    (set module.exports
+         'devtool "source-map"
+         'plugins [ (new webpack.optimize.UglifyJsPlugin)
+                    (new webpack.DefinePlugin { "process.env.NODE_ENV" (JSON.stringify 'production) })
+                    ]))
