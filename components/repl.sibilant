@@ -3,41 +3,41 @@
 (import-bootstrap)
 
 (require! inspect "util-inspect")
-
-(def-class REPL-js
-           (var { compiling sibilant-code js-code result } this.props
-                *this this)
-           (div
-            (when compiling 'compiling)
-            (pre (code js-code))
-            (when result (pre (code result)))))
-            ;; (unless true
-            ;;         (Highlight language: 'js, label: 'result, result))))
+(import-classes! { HighlightJS } "./highlight.sibilant")
 
 (def-class REPL
            execute-command: (#> (|> this.refs.repl-input
                                    .get-value
                                    this.props.sibilize))
+
+           evaluate: (#> (|> this.props.repl.sibilant-string
+                             this.props.evaluate))
+
+           hide-repl: (#> (this.props.display-repl false))
            
-           (var { repl display-repl } this.props
-                { js-string sibilant-string compiling } repl)
+           (var { repl display-repl evaluate } this.props
+                { js-string sibilant-string compiling result } repl)
 
            (Modal show repl.visibility
                   backdrop true
                   animation true
-                  on-hide (#> (display-repl false))
+                  on-hide this.hide-repl
                   (Modal.Header close-button! (div (h1 "Interactive in-browser compiler")))
                   (Modal.Body
                    (ListGroup
-                    (Input type: 'textarea
-                           ref: 'repl-input
-                           placeholder "type sibilant code here to see it compiled below"
-                           value: sibilant-string
-                           on-change: this.execute-command)
-                    (REPL-js sibilant-code sibilant-string
-                             compiling compiling
-                             js-code js-string)))))
+                    (ListGroupItem
+                     (Input type: 'textarea
+                            ref: 'repl-input
+                            placeholder "type sibilant code here to see it compiled below"
+                            value: sibilant-string
+                            on-change: this.execute-command))
+                    (when compiling (ListGroupItem 'compiling))
+                    (when js-string
+                          (ListGroupItem (pre (code js-string))))
+                    (when js-string
+                          (ListGroupItem
+                           (if result
+                               (HighlightJS result)
+                               (Button on-click this.evaluate 'eval))))))))
 
-
-
-(set exports 'REPL REPL)
+(export REPL)

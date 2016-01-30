@@ -2,9 +2,9 @@
 (import-namespace react)
 
 (require! { connect } "react-redux"
-          { sibilize display-repl } "../actions.sibilant"
+          { sibilize display-repl evaluate } "../actions.sibilant"
           { Router Route Link } "react-router"
-          { push-path } "redux-simple-router"
+          { route-actions } "react-router-redux"
           { values } "lodash/object"
           lodash-collection "lodash/collection")
             
@@ -19,11 +19,13 @@
 
 (def-class App
            (var { on-filter-change tags docs filter
-                  doc-names repl sibilize display-repl } this.props)
+                  doc-names repl sibilize display-repl
+                  evaluate } this.props)
            (div
             (REPL repl: repl
                   display-repl display-repl
-                  sibilize: sibilize)
+                  sibilize: sibilize
+                  evaluate: evaluate)
             (Header on-filter-change on-filter-change,
                     display-repl display-repl
                     tags tags,
@@ -62,8 +64,9 @@
 
 (def map-dispatch-to-props (dispatch)
      { sibilize (#-> sibilize dispatch)
+       evaluate (#-> evaluate dispatch)
        display-repl (#-> display-repl dispatch)
-       on-filter-change (#> (|> (ternary #0 ("/" #0) "/") push-path dispatch)) })
+       on-filter-change (#> (|> (ternary #0 ("/" #0) "/") route-actions.push dispatch)) })
 
 (set exports 'App ((connect map-state-to-props map-dispatch-to-props)
                    App))

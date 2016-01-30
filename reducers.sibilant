@@ -1,7 +1,8 @@
 (require! lodash-object "lodash/object"
           initial-state "./initial-state.sibilant"
           { DISPLAY_REPL SET_FILTER
-            DISPLAY_JS DISPLAY_SIBILANT } "./actions.sibilant")
+            DISPLAY_JS DISPLAY_SIBILANT
+            DISPLAY_RESULT } "./actions.sibilant")
 
 
 (var *assign lodash-object.assign
@@ -29,8 +30,13 @@
          (= action.type DISPLAY_REPL)
          (merge-state { visibility action.visibility })
 
-         (= action.type DISPLAY_SIBILANT)
+         (= action.type DISPLAY_RESULT)
+         (merge-state { result action.result})
+
+         (and (= action.type DISPLAY_SIBILANT)
+              (!= state.sibilant-string action.sibilant-string))
          (merge-state { compiling true
+                        result undefined
                         sibilant-string action.sibilant-string })
 
          state))

@@ -1,8 +1,7 @@
 (require! {values} "lodash/object"
           docs "sibilant/docs/docs.json")
 
-(var repl { sibilant ""
-            visibility false }
+(var repl { visibility false }
 
      docs-by-name (|> docs (.reduce (#> (set #0 (get #1 'name) #1) #0) {}))
 

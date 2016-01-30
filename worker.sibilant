@@ -1,8 +1,21 @@
-(var commands {}
-     {sibilant} (require "sibilant/lib/browser"))
+(var commands {})
+(require!
+ {sibilant} "sibilant/lib/browser"
+ serialize "serialize-javascript")
+
+
+(def tap (v fn) (fn v) v)
 
 (def commands.sibilize (sibilant-code)
      (sibilant.sibilize sibilant-code))
+
+(def commands.evaluate (sibilant-code)
+     (|> ("(do "sibilant-code")")
+         sibilant.sibilize
+         (new Function #)
+         call
+         serialize))
+
 
 (def on-message (e)
      (var [ identifier command data ] e.data
@@ -11,8 +24,8 @@
 
      (try (set return-value 'result (apply command-fn data))
           (set return-value 'error e.message))
-                  
+     
      (post-message [ identifier return-value ]))
 
 (assign onmessage on-message)
-          
+

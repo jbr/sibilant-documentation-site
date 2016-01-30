@@ -3,6 +3,7 @@
      DISPLAY_JS 'display-js
      DISPLAY_SIBILANT 'display-sibilant
      DISPLAY_REPL 'display-repl
+     DISPLAY_RESULT 'display-result
      { PromiseWorker } (require "./promise-worker.sibilant")
      werker (PromiseWorker))
 
@@ -24,6 +25,18 @@
      { type DISPLAY_JS,
        js-string js-string })
 
+
+(def display-result (result)
+     { type DISPLAY_RESULT,
+       result result })
+
+(def evaluate (sibilant-string)
+     (#(dispatch)
+       (|> werker
+           (.send 'evaluate [sibilant-string])
+           (.then (#-> display-result dispatch)
+                  (#-> display-result dispatch)))))
+
 (def display-repl (visibility)
      { type DISPLAY_REPL,
        visibility visibility })
@@ -34,26 +47,22 @@
 
 (def sibilize (sibilant-string)
      (#(dispatch)
-       (dispatch (display-sibilant sibilant-string))
-
-       (def fulfilled (js-string)
-            (dispatch (display-js js-string)))
-       (def rejected (error-message)
-            (dispatch (display-js error-message)))
-       (werker.terminate)
-       (delete werker)
-       (assign werker (PromiseWorker))
+       (|> sibilant-string display-sibilant dispatch)
        (|> werker
            (.send 'sibilize [sibilant-string])
-           (.then fulfilled rejected))))
+           (.then (#-> display-js dispatch)
+                  (#-> display-js dispatch)))))
 
 (export SET_FILTER
         REPL_EXECUTE_COMMAND
         DISPLAY_JS
         DISPLAY_SIBILANT
         DISPLAY_REPL
+        DISPLAY_RESULT
+        display-result
         display-repl
         display-sibilant
+        evaluate
         set-filter
         repl-execute-command
         display-js

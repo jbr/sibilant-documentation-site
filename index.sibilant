@@ -2,32 +2,39 @@
 (import-namespace react)
 
 (require!
+{ create-store combine-reducers compose apply-middleware } 'redux
  "redux-thunk"
+ "react-router"
+ 'react
  { render } "react-dom"
- { create-store combine-reducers apply-middleware } 'redux
- { create-history } 'history
- { sync-redux-and-router route-reducer } "redux-simple-router"
+ { sync-history route-reducer } "react-router-redux"
  lodash-object "lodash/object"
  reducers "./reducers.sibilant")
-
 
 (import-classes!
  {App} "./containers/app.sibilant"
  {Provider} "react-redux"
- {Router Route} "react-router")
+ {Router Route} react-router)
 
 (var
+ { browser-history } react-router
  *assign lodash-object.assign
  root-element (document.get-element-by-id 'app)
  reducer (combine-reducers (*assign {} reducers { routing route-reducer }))
- create-store-with-middleware (|> apply-middleware (call redux-thunk) (call create-store))
- store (create-store-with-middleware reducer)
- history (create-history))
+ redux-router-middleware (sync-history browser-history)
+ devtool (if window.dev-tools-extension
+             (window.dev-tools-extension)
+             (#(f) f))
+ store (create-store reducer
+                     (compose
+                      (apply-middleware redux-thunk
+                                        redux-router-middleware)
+                      devtool)))
 
-(sync-redux-and-router history store)
+(|> redux-router-middleware (.listen-for-replays store))
 
-(render (Provider store store
-                  (Router history history
+(render (Provider store: store
+                  (Router history browser-history
                           (Route path "/" component App)
                           (Route path "/:filter" component App)))
         root-element)
