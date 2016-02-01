@@ -15,7 +15,7 @@
 
 (command upload "upload to s3"
          (console.log "Syncing to amazon s3")
-         (exec ("aws s3 sync . s3://docs.sibilantjs.info/ "
+         (exec ("aws s3 sync . s3://docs.sibilant.org/ "
                 "--region us-east-1 "
                 "--acl public-read "
                 "--exclude \".git/*\" "

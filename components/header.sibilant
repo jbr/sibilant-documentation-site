@@ -22,7 +22,7 @@
             (Navbar.Collapse
              (Nav
               (NavItem event-key 1 href: "https://github.com/jbr/sibilant" "Github")
-              (NavItem event-key 2 href: "http://sibilantjs.info" "Tutorial")
+              (NavItem event-key 2 href: "http://sibilant.org" "Tutorial")
               (NavItem event-key 3 on-click: this.show-repl
                        "Try Sibilant in your browser!"))
 
