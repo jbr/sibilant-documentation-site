@@ -1,69 +1,27 @@
-(var SET_FILTER 'set-filter
-     REPL_EXECUTE_COMMAND 'repl-execute-command
-     DISPLAY_JS 'display-js
-     DISPLAY_SIBILANT 'display-sibilant
-     DISPLAY_REPL 'display-repl
-     DISPLAY_RESULT 'display-result
-     { PromiseWorker } (require "./promise-worker.sibilant")
-     werker (PromiseWorker))
+(include "./macros.sibilant")
+(namespace react)
+(require! {PromiseWorker} "./promise-worker.sibilant")
+(var werker (PromiseWorker))
 
-(macro export (...local-vars)
-       (var pairs (local-vars.reduce
-                   (#(acc value) (acc.concat [(^core/quote value) value]))
-                   []))
-       `(set exports ...@pairs))
+(def-actions (set-filter filter)
+             (repl-execute-command sibilant)
+             (display-js js-string)
+             (display-result result)
+             (display-repl visibility)
+             (display-sibilant sibilant-string))
 
-(def set-filter (filter)
-     { type SET_FILTER,
-       filter filter })
+(def! evaluate (sibilant-string)
+      (#(dispatch)
+        (|> werker
+            (.send 'evaluate [sibilant-string])
+            (.then (#-> display-result dispatch)
+                   (#-> display-result dispatch)))))
 
-(def repl-execute-command (sibilant-string)
-     { type REPL_EXECUTE_COMMAND,
-       sibilant sibilant-string })
+(def! sibilize (sibilant-string)
+      (#(dispatch)
+        (|> sibilant-string display-sibilant dispatch)
+        (|> werker
+            (.send 'sibilize [sibilant-string])
+            (.then (#-> display-js dispatch)
+                   (#-> display-js dispatch)))))
 
-(def display-js (js-string)
-     { type DISPLAY_JS,
-       js-string js-string })
-
-
-(def display-result (result)
-     { type DISPLAY_RESULT,
-       result result })
-
-(def evaluate (sibilant-string)
-     (#(dispatch)
-       (|> werker
-           (.send 'evaluate [sibilant-string])
-           (.then (#-> display-result dispatch)
-                  (#-> display-result dispatch)))))
-
-(def display-repl (visibility)
-     { type DISPLAY_REPL,
-       visibility visibility })
-
-(def display-sibilant (sibilant-string)
-     { type DISPLAY_SIBILANT
-       sibilant-string sibilant-string })
-
-(def sibilize (sibilant-string)
-     (#(dispatch)
-       (|> sibilant-string display-sibilant dispatch)
-       (|> werker
-           (.send 'sibilize [sibilant-string])
-           (.then (#-> display-js dispatch)
-                  (#-> display-js dispatch)))))
-
-(export SET_FILTER
-        REPL_EXECUTE_COMMAND
-        DISPLAY_JS
-        DISPLAY_SIBILANT
-        DISPLAY_REPL
-        DISPLAY_RESULT
-        display-result
-        display-repl
-        display-sibilant
-        evaluate
-        set-filter
-        repl-execute-command
-        display-js
-        sibilize)

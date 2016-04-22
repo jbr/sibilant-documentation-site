@@ -2,9 +2,9 @@
 (import-namespace react)
 (import-bootstrap)
 
-(def-class Highlight
-           (var highlight-snippet (try (|> (get { js 'js sibilant 'lisp } this.props.language)
-                                           (hljs.highlight this.props.children true)
+(def-tag! Highlight { language children label }
+           (var highlight-snippet (try (|> (get { js 'js sibilant 'lisp } language)
+                                           (hljs.highlight children true)
                                            (get 'value))
                                        "")
                 highlight { **html highlight-snippet })
@@ -14,15 +14,16 @@
                            margin-right -10
                            border-radius 0
                            border-bottom-left-radius 3 }
-                   (or this.props.label this.props.language))
-            (code dangerously-set-inner-HTML highlight)))
+                   (or label language))
+            (code dangerously-set-innerHTML highlight)))
 
-(def-class HighlightJS (Highlight language 'js this.props.children))
+(def-tag! HighlightJS {children}
+          (Highlight language 'js children))
 
-(def-class HighlightSibilant (Highlight language 'sibilant this.props.children))
+(def-tag! HighlightSibilant {children}
+          (Highlight language 'sibilant children))
 
 (set Highlight
      'JS HighlightJS
      'Sibilant HighlightSibilant)
 
-(export Highlight HighlightJS HighlightSibilant)

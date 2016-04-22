@@ -9,17 +9,20 @@
 
 
 (macro import-bootstrap ()
-       [
-       `(import-classes!
-         { Nav NavItem Navbar NavDropdown
-           MenuItem Input Button ButtonToolbar ButtonGroup Badge
-           Glyphicon Panel Accordion ListGroup ListGroupItem PanelGroup ButtonInput
-           Grid Row Label Col Modal } "react-bootstrap")
-         `(tags Navbar.Header Navbar.Brand Navbar.Toggle Navbar.Collapse Navbar.Form
-                Modal.Dialog Modal.Header Modal.Footer Modal.Body)
-         ])
+       [ `(import-namespace react)
+         `(react/import-classes! { Nav NavItem Navbar NavDropdown
+                                   MenuItem Input Button ButtonToolbar ButtonGroup Badge
+                                   Glyphicon Panel Accordion ListGroup ListGroupItem
+                                   PanelGroup ButtonInput Jumbotron Grid Row Label Col
+                                   FormGroup FormControl
+                                   Modal } "react-bootstrap")
+         `(react/tags Navbar.Header Navbar.Brand Navbar.Toggle
+                 Navbar.Collapse Navbar.Form Modal.Dialog Modal.Header FormControl.Feedback
+                 Modal.Footer Modal.Body) ])
 
-(tags a div p h1 h2 h3 pre code span strong ol li form)
+(tags a div p h1 h2 h3 h4 pre code span
+      strong ol ul em li form img label
+      footer input)
 
 (macro log-pretty (label arg)
        (var node this
@@ -37,4 +40,3 @@
                                  (call @arg false)))))
 
 (alias-macro log-pretty pretty-log)
-

@@ -1,8 +1,6 @@
 (require! lodash-object "lodash/object"
           initial-state "./initial-state.sibilant"
-          { DISPLAY_REPL SET_FILTER
-            DISPLAY_JS DISPLAY_SIBILANT
-            DISPLAY_RESULT } "./actions.sibilant")
+          actions "./actions.sibilant")
 
 
 (var *assign lodash-object.assign
@@ -15,7 +13,7 @@
 
 (def reducers.filter (state action)
      (default state false)
-     (if (= action.type SET_FILTER)
+     (if (= action.type actions.set-filter.name)
          (or action.filter false)
          state))
 
@@ -23,17 +21,17 @@
      (default state initial-state.repl)
      (var merge-state (#> (*assign {} state #0)))
      
-     (if (= action.type DISPLAY_JS)
+     (if (= action.type actions.display-js.name)
          (merge-state { compiling false
                         js-string action.js-string })
 
-         (= action.type DISPLAY_REPL)
+         (= action.type actions.display-repl.name)
          (merge-state { visibility action.visibility })
 
-         (= action.type DISPLAY_RESULT)
+         (= action.type actions.display-result)
          (merge-state { result action.result})
 
-         (and (= action.type DISPLAY_SIBILANT)
+         (and (= action.type actions.display-sibilant.name)
               (!= state.sibilant-string action.sibilant-string))
          (merge-state { compiling true
                         result undefined

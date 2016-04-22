@@ -2,12 +2,12 @@
 (import-namespace react)
 
 (require!
-{ create-store combine-reducers compose apply-middleware } 'redux
+ { create-store combine-reducers compose apply-middleware } 'redux
  "redux-thunk"
  "react-router"
  'react
  { render } "react-dom"
- { sync-history route-reducer } "react-router-redux"
+ { router-middleware sync-history-with-store router-reducer } "react-router-redux"
  lodash-object "lodash/object"
  reducers "./reducers.sibilant")
 
@@ -16,25 +16,22 @@
  {Provider} "react-redux"
  {Router Route} react-router)
 
-(var
- { browser-history } react-router
- *assign lodash-object.assign
- root-element (document.get-element-by-id 'app)
- reducer (combine-reducers (*assign {} reducers { routing route-reducer }))
- redux-router-middleware (sync-history browser-history)
- devtool (if window.dev-tools-extension
-             (window.dev-tools-extension)
-             (#(f) f))
- store (create-store reducer
-                     (compose
-                      (apply-middleware redux-thunk
-                                        redux-router-middleware)
-                      devtool)))
+(var { browser-history } react-router
+     redux-thunk redux-thunk.default
+     *assign lodash-object.assign
+     root-element (document.get-element-by-id 'app)
+     reducer (combine-reducers (*assign {} reducers { routing router-reducer }))
+     devtool (if window.dev-tools-extension
+                 (window.dev-tools-extension)
+                 (#(f) f))
+     store (create-store reducer
+                         (compose
+                          (apply-middleware redux-thunk (router-middleware browser-history))
+                          devtool))
+     history (sync-history-with-store browser-history store))
 
-(|> redux-router-middleware (.listen-for-replays store))
-
-(render (Provider store: store
-                  (Router history browser-history
+(render (Provider store&
+                  (Router history&
                           (Route path "/" component App)
                           (Route path "/:filter" component App)))
         root-element)

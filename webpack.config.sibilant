@@ -4,12 +4,11 @@
      'entry { index "./index.sibilant"
               worker "./worker.sibilant" }
 
-     'output { path "build"
+     'output { path (concat **dirname "/build")
                filename "[name].bundle.js"
-               chunkFilename: "[id].[hash].bundle.js"
+               chunk-filename: "[id].bundle.js"
                source-map-filename "[file].map" }
-
-     'devtool 'eval
+     'devtool "#cheap-module-eval-source-map"
 
      'module { loaders
                [ { test (regex "\\.json$")
@@ -17,9 +16,11 @@
                  { test (regex "\\.sibilant$")
                    loader "sibilant" }]})
 
-(when (= 'production process.env.NODE_ENV)
+(when (= 'production process.env.NODE-ENV)
     (set module.exports
-         'devtool "source-map"
-         'plugins [ (new webpack.optimize.UglifyJsPlugin)
+         'devtool "#source-map"
+         'plugins [ (new webpack.optimize.UglifyJsPlugin
+                         { compressor { warnings false keep_fnames true }
+                           mangle false })
                     (new webpack.DefinePlugin { "process.env.NODE_ENV" (JSON.stringify 'production) })
                     ]))

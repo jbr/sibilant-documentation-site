@@ -6,6 +6,7 @@
  {Tags} "./tags.sibilant"
  {Macro} "./macro.sibilant")
 
+(meta (console.log "SUCCESS"))
 (def-class DocListing
            (var { on-filter-change tags filter docs doc-names } this.props)
 

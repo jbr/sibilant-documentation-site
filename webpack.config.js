@@ -4,12 +4,12 @@ module.exports.entry = {
   worker: "./worker.sibilant"
 };
 module.exports.output = {
-  path: "build",
+  path: (__dirname + "/build"),
   filename: "[name].bundle.js",
-  chunkFilename: "[id].[hash].bundle.js",
+  chunkFilename: "[id].bundle.js",
   sourceMapFilename: "[file].map"
 };
-module.exports.devtool = "eval";
+module.exports.devtool = "#cheap-module-eval-source-map";
 module.exports.module = { loaders: [ {
   test: (new RegExp("\\.json$", undefined)),
   loader: "json"
@@ -19,7 +19,13 @@ module.exports.module = { loaders: [ {
 } ] };
 (function() {
   if ("production" === process.env.NODE_ENV) {
-    module.exports.devtool = "source-map";
-    return module.exports.plugins = [ (new webpack.optimize.UglifyJsPlugin()), (new webpack.DefinePlugin({ "process.env.NODE_ENV": JSON.stringify("production") })) ];
+    module.exports.devtool = "#source-map";
+    return module.exports.plugins = [ (new webpack.optimize.UglifyJsPlugin({
+      compressor: {
+        warnings: false,
+        keep_fnames: true
+      },
+      mangle: false
+    })), (new webpack.DefinePlugin({ "process.env.NODE_ENV": JSON.stringify("production") })) ];
   }
 }).call(this);

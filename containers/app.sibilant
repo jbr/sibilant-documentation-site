@@ -4,7 +4,7 @@
 (require! { connect } "react-redux"
           { sibilize display-repl evaluate } "../actions.sibilant"
           { Router Route Link } "react-router"
-          { route-actions } "react-router-redux"
+          { push } "react-router-redux"
           { values } "lodash/object"
           lodash-collection "lodash/collection")
             
@@ -17,10 +17,9 @@
  { Footer } "../components/footer.sibilant"
  { REPL } "../components/repl.sibilant")
 
-(def-class App
-           (var { on-filter-change tags docs filter
-                  doc-names repl sibilize display-repl
-                  evaluate } this.props)
+(def-tag App { on-filter-change tags docs filter
+               doc-names repl sibilize display-repl
+               evaluate }
            (div
             (REPL repl: repl
                   display-repl display-repl
@@ -66,7 +65,7 @@
      { sibilize (#-> sibilize dispatch)
        evaluate (#-> evaluate dispatch)
        display-repl (#-> display-repl dispatch)
-       on-filter-change (#> (|> (ternary #0 ("/" #0) "/") route-actions.push dispatch)) })
+       on-filter-change (#> (|> (ternary #0 ("/" #0) "/") push dispatch)) })
 
 (set exports 'App ((connect map-state-to-props map-dispatch-to-props)
                    App))
