@@ -11,7 +11,7 @@
     "react-router-redux": "^4.0.2",
     "redux": "^3.5.1",
     "redux-thunk": "^2.0.1",
-    "serialize-javascript": "^1.2.0",
+    "serialize-javascript": "^2.1.2",
     "sibilant": "../sibilant",
     "sibilant-loader": "../sibilant-webpack-loader",
     "sibilant-react": "../sibilant-react",
